@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290637231,
+  "updatedAt": 1784290648332,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -77,6 +77,11 @@
         "n": "Reembolso - Green",
         "cat": "Outros",
         "tipo": "empresarial"
+      },
+      {
+        "n": "Reembolso - Ida",
+        "cat": "Outros",
+        "tipo": "familiar"
       },
       {
         "n": "Salário Ágda",
