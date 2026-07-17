@@ -189,6 +189,12 @@ var RCATS = ['Salário','Pró-labore','Distribuição de lucros','Vendas','Servi
 var TIPOS = ['pessoal','familiar','empresarial'];
 var PESSOAS = ['Davi','Ágda','Ambos'];
 var TIPO_STYLES = {pessoal:'pessoal', familiar:'familiar', empresarial:'empresarial'};
+var DEFAULT_MERCHANT_RULES = [
+  'DM*HOSTINGERCOMB','EBN *HOSTINGER','SQSP*','MANYCHAT COM','OPENAI *CHATGPT SUBSCR',
+  'RAILWAY','SEATS AERO','FACEBK','ANTHROPIC','IG*NAPOLEON','STAPE, INC','HBL*HBLEXECUTIVAC',
+  'HBL*HBLEMBARQUEDIG','HTM*ENOTAS DESENVOLVIM','HUBLA *GABRIELDIAS','HBL*HBLPENONI','KIWIFY *AVDMILHAS',
+  'HUBLA *ALERTASTSM','EBN *CANVA04589 43'
+].map(function(p){ return { pattern: p, tipo:'empresarial', pessoa:'Davi' }; });
 
 /* ==================== Utilidades ==================== */
 function esc(v){
@@ -236,6 +242,8 @@ var App = {
       pIn: { despesas: { n:'', cat:'Outros', tipo:'familiar' }, receitas: { n:'', cat:'Salário', tipo:'familiar' } },
       taxo: { cats: CATS.slice(), recCats: RCATS.slice(), tipos: TIPOS.slice() },
       tIn: { cats:'', recCats:'', tipos:'' },
+      merchantRules: DEFAULT_MERCHANT_RULES.map(function(r){ return Object.assign({}, r); }),
+      mrIn: { pattern:'', tipo:'empresarial', pessoa:'Davi' },
       updatedAt: 0,
       cfg: { owner:'', repo:'', branch:'main', path:'financas-dados.json', token:'', auto:true, aiProxyUrl:'', aiProxyKey:'' },
       sync: { st:'off', msg:'', msgKind:'info', last:null },
@@ -276,6 +284,7 @@ var App = {
         self.state.incomes = d.incomes || [];
         self.state.presets = self.normPresets(d.presets || {});
         self.state.taxo = self.normTaxo(d.taxo || {});
+        self.state.merchantRules = (d.merchantRules && d.merchantRules.length) ? d.merchantRules : self.state.merchantRules;
         self.state.updatedAt = d.updatedAt || 0;
       }
     }catch(e){}
@@ -291,7 +300,7 @@ var App = {
   persist: function(){
     var s = this.state;
     s.updatedAt = Date.now();
-    var data = { version:1, updatedAt: s.updatedAt, cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo };
+    var data = { version:1, updatedAt: s.updatedAt, cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo, merchantRules: s.merchantRules };
     try{ localStorage.setItem('gff-data', JSON.stringify(data)); }catch(e){}
     if(this.cfgOk() && s.cfg.auto){
       clearTimeout(this._pushTimer);
@@ -357,6 +366,7 @@ var App = {
           self.state.incomes = data.incomes || [];
           self.state.presets = self.normPresets(data.presets || {});
           self.state.taxo = self.normTaxo(data.taxo || {});
+          self.state.merchantRules = (data.merchantRules && data.merchantRules.length) ? data.merchantRules : self.state.merchantRules;
           self.state.updatedAt = remoteAt;
           try{ localStorage.setItem('gff-data', JSON.stringify(data)); }catch(e){}
           self.setSync('ok', silent ? '' : 'Dados carregados da nuvem.', 'ok');
@@ -376,7 +386,7 @@ var App = {
       .then(function(j){
         if(j) sha = j.sha;
         var s = self.state;
-        var data = { version:1, updatedAt: s.updatedAt || Date.now(), cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo };
+        var data = { version:1, updatedAt: s.updatedAt || Date.now(), cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo, merchantRules: s.merchantRules };
         var body = { message: 'Atualização das finanças — ' + new Date().toLocaleString('pt-BR'), content: self.b64enc(JSON.stringify(data,null,2)), branch: s.cfg.branch };
         if(sha) body.sha = sha;
         return fetch(self.ghUrl(), { method:'PUT', headers: Object.assign({}, self.ghHeaders(), {'Content-Type':'application/json'}), body: JSON.stringify(body) });
@@ -430,6 +440,14 @@ var App = {
     var v = (name||'').trim().toLowerCase();
     return (this.state.presets[g]||[]).find(function(x){ return x.n.toLowerCase() === v; });
   },
+  matchMerchantRule: function(desc){
+    var d = (desc||'').toUpperCase();
+    var rules = this.state.merchantRules || [];
+    for(var i=0;i<rules.length;i++){
+      if(rules[i].pattern && d.indexOf(rules[i].pattern.toUpperCase()) !== -1) return rules[i];
+    }
+    return null;
+  },
   openExpForm: function(){
     this.state.expForm = { id:null, desc:'', valor:'', data: todayIso(), fatura: this.state.filters.mes,
       cardId: this.state.cards[0] ? this.state.cards[0].id : 'none', cat:'Outros', tipo:'familiar', pessoa:'Davi', pAtual:'', pTotal:'' };
@@ -444,7 +462,10 @@ var App = {
   expField: function(el){
     var k = el.dataset.k, v = el.value;
     this.state.expForm[k] = v;
-    if(k === 'desc'){ var p = this.findPreset('despesas', v); if(p){ this.state.expForm.cat = p.cat; this.state.expForm.tipo = p.tipo; } }
+    if(k === 'desc'){
+      var p = this.findPreset('despesas', v); if(p){ this.state.expForm.cat = p.cat; this.state.expForm.tipo = p.tipo; }
+      var rule = this.matchMerchantRule(v); if(rule){ this.state.expForm.tipo = rule.tipo; this.state.expForm.pessoa = rule.pessoa; }
+    }
     this.render();
   },
   saveExp: function(){
@@ -561,6 +582,23 @@ var App = {
     this.persist(); this.render();
   },
 
+  /* ---------- Regras automáticas de classificação (fatura) ---------- */
+  mrField: function(el){ this.state.mrIn[el.dataset.k] = el.value; },
+  addMerchantRule: function(){
+    var f = this.state.mrIn, pat = (f.pattern||'').trim();
+    if(!pat) return;
+    var cur = (this.state.merchantRules||[]).filter(function(r){ return r.pattern.toUpperCase() !== pat.toUpperCase(); });
+    cur.push({ pattern: pat, tipo: f.tipo, pessoa: f.pessoa });
+    this.state.merchantRules = cur;
+    this.state.mrIn.pattern = '';
+    this.persist(); this.render();
+  },
+  delMerchantRule: function(el){
+    var pat = el.dataset.n;
+    this.state.merchantRules = (this.state.merchantRules||[]).filter(function(r){ return r.pattern !== pat; });
+    this.persist(); this.render();
+  },
+
   /* ---------- Importar fatura ---------- */
   impField: function(el){ this.state.imp[el.dataset.k] = el.value; this.render(); },
   onPdf: function(el, ev){
@@ -651,14 +689,16 @@ var App = {
       var arr = JSON.parse(m[0]);
       if(!Array.isArray(arr) || !arr.length) throw new Error('nenhum lançamento identificado');
       var rows = arr.map(function(r){
+        var desc = String(r.descricao || r.desc || '').trim() || 'Lançamento';
+        var rule = self.matchMerchantRule(desc);
         return {
           data: typeof r.data === 'string' ? r.data : '',
-          desc: String(r.descricao || r.desc || '').trim() || 'Lançamento',
+          desc: desc,
           valor: Number(r.valor) || 0,
           pAtual: r.parcelaAtual ? Number(r.parcelaAtual) : null,
           pTotal: r.parcelasTotal ? Number(r.parcelasTotal) : null,
           cat: self.state.taxo.cats.indexOf(r.categoria) !== -1 ? r.categoria : 'Outros',
-          tipo: imp.tipo, pessoa: imp.pessoa, inc: true
+          tipo: rule ? rule.tipo : imp.tipo, pessoa: rule ? rule.pessoa : imp.pessoa, inc: true
         };
       }).filter(function(r){ return r.valor !== 0; });
       self.state.imp.busy = false; self.state.imp.rows = rows;
@@ -704,7 +744,7 @@ var App = {
   pushCloud: function(){ this.push(false); },
   exportJson: function(){
     var s = this.state;
-    var data = { version:1, updatedAt: s.updatedAt, cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo };
+    var data = { version:1, updatedAt: s.updatedAt, cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo, merchantRules: s.merchantRules };
     var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -723,6 +763,7 @@ var App = {
       self.state.incomes = data.incomes || [];
       self.state.presets = self.normPresets(data.presets || {});
       self.state.taxo = self.normTaxo(data.taxo || {});
+      self.state.merchantRules = (data.merchantRules && data.merchantRules.length) ? data.merchantRules : self.state.merchantRules;
       self.persist();
       self.setSync(self.state.sync.st, 'Dados restaurados do arquivo.', 'ok');
     }).catch(function(err){
@@ -1170,6 +1211,19 @@ var App = {
     });
     html += '</div>';
 
+    html += '<div class="card"><h2 class="card-title">Regras automáticas de classificação</h2>' +
+      '<div style="font-size:12px;color:var(--text2);line-height:1.6">Quando um lançamento de fatura importado por IA contiver um destes trechos no nome, o Tipo e a Pessoa são definidos automaticamente, sem depender do que a IA sugerir. Não é sensível a maiúsculas/minúsculas.</div>';
+    html += '<div class="grid-form">';
+    html += '<label class="field full">Trecho do nome<input class="inp" value="'+esc(s.mrIn.pattern)+'" data-act="mrField" data-k="pattern" placeholder="Ex.: NETFLIX.COM"></label>';
+    html += '<label class="field">Tipo<select class="inp" data-act="mrField" data-k="tipo" style="text-transform:capitalize">' + this.optionsHtml(s.taxo.tipos, s.mrIn.tipo, true) + '</select></label>';
+    html += '<label class="field">Pessoa<select class="inp" data-act="mrField" data-k="pessoa">' + this.optionsHtml(PESSOAS, s.mrIn.pessoa) + '</select></label>';
+    html += '</div>';
+    html += '<div><button class="btn-tiny" data-act="addMerchantRule">Adicionar regra</button></div>';
+    var mrs = s.merchantRules || [];
+    html += '<div class="chip-wrap">' + (mrs.length ? mrs.map(function(r){
+      return '<span class="chip">'+esc(r.pattern)+' → '+esc(r.tipo)+' · '+esc(r.pessoa)+'<button data-act="delMerchantRule" data-n="'+esc(r.pattern)+'">×</button></span>';
+    }).join('') : '<span style="font-size:12px;color:var(--text3)">Nenhuma regra cadastrada.</span>') + '</div></div>';
+
     html += '</div>';
     return html;
   },
@@ -1224,10 +1278,10 @@ var App = {
   /* ==================== Eventos ==================== */
   bindEvents: function(){
     var self = this;
-    var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat'];
+    var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat','mrField'];
     var CLICK_ACTIONS = ['goTab','openCardForm','editCard','saveCard','cancelCard','delCard','openExpForm','editExp','saveExp','cancelExp','delExp',
       'openIncForm','editInc','saveInc','cancelInc','delInc','addPreset','delPreset','addTaxo','delTaxo','parseNow','clearImport','confirmImport',
-      'pullCloud','pushCloud','exportJson'];
+      'pullCloud','pushCloud','exportJson','addMerchantRule','delMerchantRule'];
     var FILE_ACTIONS = ['onPdf','onImportFile'];
     var CHECK_ACTIONS = ['toggleRow'];
 
