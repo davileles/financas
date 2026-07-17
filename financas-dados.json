@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290854748,
+  "updatedAt": 1784290871069,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -82,6 +82,11 @@
         "n": "Concierge",
         "cat": "Vendas",
         "tipo": "empresarial"
+      },
+      {
+        "n": "Reembolso - Geraldo",
+        "cat": "Outros",
+        "tipo": "familiar"
       },
       {
         "n": "Reembolso - Green",
