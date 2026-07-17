@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290621940,
+  "updatedAt": 1784290625091,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -71,11 +71,6 @@
       {
         "n": "Concierge",
         "cat": "Vendas",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Reembolso - Ida",
-        "cat": "Outros",
         "tipo": "empresarial"
       },
       {
