@@ -1,11 +1,16 @@
 {
   "version": 1,
-  "updatedAt": 1784290446517,
+  "updatedAt": 1784290463834,
   "cards": [],
   "expenses": [],
   "incomes": [],
   "presets": {
     "despesas": [
+      {
+        "n": "Ajudantes Clube do Viajante",
+        "cat": "Serviços",
+        "tipo": "empresarial"
+      },
       {
         "n": "Claude",
         "cat": "Serviços",
