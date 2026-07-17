@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784288044258,
+  "updatedAt": 1784288084578,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -9,6 +9,16 @@
       {
         "n": "Contabilidade",
         "cat": "Serviços",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "DAS",
+        "cat": "Impostos e taxas",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "INSS",
+        "cat": "Impostos e taxas",
         "tipo": "empresarial"
       }
     ],
