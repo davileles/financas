@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290589561,
+  "updatedAt": 1784290605373,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -71,6 +71,11 @@
       {
         "n": "Concierge",
         "cat": "Vendas",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "Reembolso Green",
+        "cat": "Outros",
         "tipo": "empresarial"
       },
       {
