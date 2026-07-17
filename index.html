@@ -241,7 +241,7 @@ var App = {
       sync: { st:'off', msg:'', msgKind:'info', last:null },
       filters: { mes: mes, cardId:'', cat:'', tipo:'', pessoa:'', busca:'', recTipo:'', recPessoa:'' },
       cardForm: null, expForm: null, incForm: null, formErr: '', confirmDel: null,
-      imp: { cardId:'', mes: mes, tipo:'familiar', pessoa:'Davi', text:'', busy:false, pdfBusy:false, err:'', rows:null },
+      imp: { cardId:'', mes: mes, tipo:'familiar', pessoa:'Davi', text:'', busy:false, pdfBusy:false, err:'', rows:null, pdfPassword:'' },
       prefs: { ocultarValores:false, mesesProjecao:6, modeloIA:'claude-haiku-4-5' }
     };
     this.load();
@@ -567,12 +567,17 @@ var App = {
     var f = ev.target.files && ev.target.files[0]; ev.target.value = '';
     if(!f) return;
     var self = this;
+    var pwd = (this.state.imp.pdfPassword || '').trim() || undefined;
     this.state.imp.pdfBusy = true; this.state.imp.err=''; this.render();
     Promise.resolve().then(function(){
       return import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
     }).then(function(pdfjs){
       pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
-      return f.arrayBuffer().then(function(buf){ return pdfjs.getDocument({data:buf}).promise; });
+      return f.arrayBuffer().then(function(buf){
+        var opts = { data: buf };
+        if(pwd) opts.password = pwd;
+        return pdfjs.getDocument(opts).promise;
+      });
     }).then(function(doc){
       var pagesText = [];
       function readPage(p){
@@ -596,7 +601,13 @@ var App = {
       self.render();
     }).catch(function(err){
       self.state.imp.pdfBusy = false;
-      self.state.imp.err = 'Não consegui ler este PDF (' + err.message + '). Se ele for protegido ou digitalizado como imagem, copie o texto da fatura e cole na caixa acima.';
+      if(err && err.name === 'PasswordException'){
+        self.state.imp.err = pwd
+          ? 'Senha incorreta para este PDF. Confira a senha no campo acima e envie o arquivo novamente.'
+          : 'Este PDF está protegido por senha. Informe a senha no campo "Senha do PDF" acima e envie o arquivo novamente.';
+      } else {
+        self.state.imp.err = 'Não consegui ler este PDF (' + err.message + '). Se ele for digitalizado como imagem, copie o texto da fatura e cole na caixa acima.';
+      }
       self.render();
     });
   },
@@ -1021,6 +1032,7 @@ var App = {
     html += '<label class="field">Pessoa padrão<select class="inp" data-act="impField" data-k="pessoa">' + this.optionsHtml(PESSOAS, imp.pessoa) + '</select></label>';
     html += '</div>';
     html += '<label class="field full">Texto da fatura<textarea class="inp" rows="9" data-act="impField" data-k="text" placeholder="Cole aqui o texto da fatura…">'+esc(imp.text)+'</textarea></label>';
+    html += '<label class="field" style="max-width:260px">Senha do PDF (se houver)<input type="password" class="inp" value="'+esc(imp.pdfPassword)+'" data-act="impField" data-k="pdfPassword" placeholder="Deixe em branco se não houver"></label>';
     html += '<div class="row">';
     html += '<label class="btn btn-secondary" style="position:relative">' + (imp.pdfBusy?'Lendo PDF…':'Enviar PDF da fatura') +
       '<input type="file" accept="application/pdf" data-act="onPdf" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>';
