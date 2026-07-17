@@ -1,141 +1,16 @@
 {
   "version": 1,
-  "updatedAt": 1784290871069,
+  "updatedAt": 0,
   "cards": [],
   "expenses": [],
   "incomes": [],
   "presets": {
-    "despesas": [
-      {
-        "n": "Academia",
-        "cat": "Saúde",
-        "tipo": "pessoal"
-      },
-      {
-        "n": "Ajudantes Clube do Viajante",
-        "cat": "Serviços",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Claude",
-        "cat": "Serviços",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Combustível",
-        "cat": "Transporte",
-        "tipo": "familiar"
-      },
-      {
-        "n": "Contabilidade",
-        "cat": "Serviços",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "DAS",
-        "cat": "Impostos e taxas",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "INSS",
-        "cat": "Impostos e taxas",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Plano de saúde",
-        "cat": "Saúde",
-        "tipo": "familiar"
-      },
-      {
-        "n": "Salão de beleza",
-        "cat": "Vestuário",
-        "tipo": "pessoal"
-      },
-      {
-        "n": "Tráfego - TSP",
-        "cat": "Serviços",
-        "tipo": "empresarial"
-      }
-    ],
-    "receitas": [
-      {
-        "n": "Afiliados - Amazon",
-        "cat": "Serviços prestados",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Afiliados - Mercado Livre",
-        "cat": "Serviços prestados",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Afiliados - Shopee",
-        "cat": "Serviços prestados",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Clube do Viajante",
-        "cat": "Vendas",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Concierge",
-        "cat": "Vendas",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Reembolso - Geraldo",
-        "cat": "Outros",
-        "tipo": "familiar"
-      },
-      {
-        "n": "Reembolso - Green",
-        "cat": "Outros",
-        "tipo": "empresarial"
-      },
-      {
-        "n": "Reembolso - Ida",
-        "cat": "Outros",
-        "tipo": "familiar"
-      },
-      {
-        "n": "Salário Ágda",
-        "cat": "Salário",
-        "tipo": "empresarial"
-      }
-    ]
+    "despesas": [],
+    "receitas": []
   },
   "taxo": {
-    "cats": [
-      "Alimentação",
-      "Supermercado",
-      "Transporte",
-      "Saúde",
-      "Educação",
-      "Lazer",
-      "Viagens",
-      "Assinaturas",
-      "Moradia",
-      "Vestuário",
-      "Pets",
-      "Serviços",
-      "Impostos e taxas",
-      "Outros"
-    ],
-    "recCats": [
-      "Salário",
-      "Pró-labore",
-      "Distribuição de lucros",
-      "Vendas",
-      "Serviços prestados",
-      "Aluguel",
-      "Investimentos",
-      "Outros"
-    ],
-    "tipos": [
-      "pessoal",
-      "familiar",
-      "empresarial"
-    ]
+    "cats": ["Alimentação","Supermercado","Transporte","Saúde","Educação","Lazer","Viagens","Assinaturas","Moradia","Vestuário","Pets","Serviços","Impostos e taxas","Outros"],
+    "recCats": ["Salário","Pró-labore","Distribuição de lucros","Vendas","Serviços prestados","Aluguel","Investimentos","Outros"],
+    "tipos": ["pessoal","familiar","empresarial"]
   }
 }
