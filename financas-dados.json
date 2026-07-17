@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290545474,
+  "updatedAt": 1784290561918,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -61,6 +61,11 @@
       {
         "n": "Afiliados - Shopee",
         "cat": "Serviços prestados",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "Concierge",
+        "cat": "Vendas",
         "tipo": "empresarial"
       }
     ]
