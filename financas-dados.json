@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290572357,
+  "updatedAt": 1784290589561,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -71,6 +71,11 @@
       {
         "n": "Concierge",
         "cat": "Vendas",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "Salário Ágda",
+        "cat": "Salário",
         "tipo": "empresarial"
       }
     ]
