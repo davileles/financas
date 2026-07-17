@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290605373,
+  "updatedAt": 1784290621940,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -74,7 +74,7 @@
         "tipo": "empresarial"
       },
       {
-        "n": "Reembolso Green",
+        "n": "Reembolso - Ida",
         "cat": "Outros",
         "tipo": "empresarial"
       },
