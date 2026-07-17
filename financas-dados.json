@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290523923,
+  "updatedAt": 1784290537423,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -50,6 +50,11 @@
     "receitas": [
       {
         "n": "Afiliados - Amazon",
+        "cat": "Serviços prestados",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "Afiliados - Mercado Livre",
         "cat": "Serviços prestados",
         "tipo": "empresarial"
       }
