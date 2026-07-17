@@ -1,11 +1,16 @@
 {
   "version": 1,
-  "updatedAt": 1784290463834,
+  "updatedAt": 1784290481318,
   "cards": [],
   "expenses": [],
   "incomes": [],
   "presets": {
     "despesas": [
+      {
+        "n": "Academia",
+        "cat": "Saúde",
+        "tipo": "familiar"
+      },
       {
         "n": "Ajudantes Clube do Viajante",
         "cat": "Serviços",
