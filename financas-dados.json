@@ -1,7 +1,16 @@
 {
   "version": 1,
-  "updatedAt": 0,
-  "cards": [],
+  "updatedAt": 1784292388804,
+  "cards": [
+    {
+      "id": "mroxmais9ojly",
+      "nome": "AAdvantage Black",
+      "banco": "Santander",
+      "limite": 70000,
+      "melhorDia": 5,
+      "venc": 17
+    }
+  ],
   "expenses": [],
   "incomes": [],
   "presets": {
@@ -9,8 +18,36 @@
     "receitas": []
   },
   "taxo": {
-    "cats": ["Alimentação","Supermercado","Transporte","Saúde","Educação","Lazer","Viagens","Assinaturas","Moradia","Vestuário","Pets","Serviços","Impostos e taxas","Outros"],
-    "recCats": ["Salário","Pró-labore","Distribuição de lucros","Vendas","Serviços prestados","Aluguel","Investimentos","Outros"],
-    "tipos": ["pessoal","familiar","empresarial"]
+    "cats": [
+      "Alimentação",
+      "Supermercado",
+      "Transporte",
+      "Saúde",
+      "Educação",
+      "Lazer",
+      "Viagens",
+      "Assinaturas",
+      "Moradia",
+      "Vestuário",
+      "Pets",
+      "Serviços",
+      "Impostos e taxas",
+      "Outros"
+    ],
+    "recCats": [
+      "Salário",
+      "Pró-labore",
+      "Distribuição de lucros",
+      "Vendas",
+      "Serviços prestados",
+      "Aluguel",
+      "Investimentos",
+      "Outros"
+    ],
+    "tipos": [
+      "pessoal",
+      "familiar",
+      "empresarial"
+    ]
   }
 }
