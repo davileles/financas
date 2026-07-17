@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "updatedAt": 1784287889596,
+  "cards": [],
+  "expenses": [],
+  "incomes": [],
+  "presets": {
+    "despesas": [],
+    "receitas": []
+  },
+  "taxo": {
+    "cats": [
+      "Alimentação",
+      "Supermercado",
+      "Transporte",
+      "Saúde",
+      "Educação",
+      "Lazer",
+      "Viagens",
+      "Assinaturas",
+      "Moradia",
+      "Vestuário",
+      "Pets",
+      "Serviços",
+      "Impostos e taxas",
+      "Outros"
+    ],
+    "recCats": [
+      "Salário",
+      "Pró-labore",
+      "Distribuição de lucros",
+      "Vendas",
+      "Serviços prestados",
+      "Aluguel",
+      "Investimentos",
+      "Outros"
+    ],
+    "tipos": [
+      "pessoal",
+      "familiar",
+      "empresarial"
+    ]
+  }
+}
