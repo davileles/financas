@@ -1,11 +1,16 @@
 {
   "version": 1,
-  "updatedAt": 1784288098911,
+  "updatedAt": 1784290446517,
   "cards": [],
   "expenses": [],
   "incomes": [],
   "presets": {
     "despesas": [
+      {
+        "n": "Claude",
+        "cat": "Serviços",
+        "tipo": "empresarial"
+      },
       {
         "n": "Contabilidade",
         "cat": "Serviços",
