@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784300124298,
+  "updatedAt": 1784300387356,
   "cards": [
     {
       "id": "mroxmais9ojly",
@@ -1658,7 +1658,7 @@
       "fatura": "2026-07",
       "cardId": "mroxmais9ojly",
       "cat": "Serviços",
-      "tipo": "familiar",
+      "tipo": "empresarial",
       "pessoa": "Davi",
       "pAtual": null,
       "pTotal": null
