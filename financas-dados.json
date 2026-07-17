@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290494350,
+  "updatedAt": 1784290504010,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -20,6 +20,11 @@
         "n": "Claude",
         "cat": "Serviços",
         "tipo": "empresarial"
+      },
+      {
+        "n": "Combustível",
+        "cat": "Transporte",
+        "tipo": "familiar"
       },
       {
         "n": "Contabilidade",
