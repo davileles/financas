@@ -1,16 +1,11 @@
 {
   "version": 1,
-  "updatedAt": 1784290692479,
+  "updatedAt": 1784290847797,
   "cards": [],
   "expenses": [],
   "incomes": [],
   "presets": {
     "despesas": [
-      {
-        "n": "Academia",
-        "cat": "Saúde",
-        "tipo": "familiar"
-      },
       {
         "n": "Ajudantes Clube do Viajante",
         "cat": "Serviços",
@@ -40,6 +35,11 @@
         "n": "INSS",
         "cat": "Impostos e taxas",
         "tipo": "empresarial"
+      },
+      {
+        "n": "Plano de saúde",
+        "cat": "Saúde",
+        "tipo": "familiar"
       },
       {
         "n": "Salão de beleza",
