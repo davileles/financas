@@ -1,11 +1,17 @@
 {
   "version": 1,
-  "updatedAt": 1784287889596,
+  "updatedAt": 1784288044258,
   "cards": [],
   "expenses": [],
   "incomes": [],
   "presets": {
-    "despesas": [],
+    "despesas": [
+      {
+        "n": "Contabilidade",
+        "cat": "Serviços",
+        "tipo": "empresarial"
+      }
+    ],
     "receitas": []
   },
   "taxo": {
