@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784288084578,
+  "updatedAt": 1784288098911,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -19,6 +19,11 @@
       {
         "n": "INSS",
         "cat": "Impostos e taxas",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "Tráfego - TSP",
+        "cat": "Serviços",
         "tipo": "empresarial"
       }
     ],
