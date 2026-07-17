@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290676410,
+  "updatedAt": 1784290687858,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -45,6 +45,11 @@
         "n": "INSS",
         "cat": "Impostos e taxas",
         "tipo": "empresarial"
+      },
+      {
+        "n": "Salão de beleza",
+        "cat": "Vestuário",
+        "tipo": "pessoal"
       },
       {
         "n": "Tráfego - TSP",
