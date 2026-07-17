@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290687858,
+  "updatedAt": 1784290692479,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -30,11 +30,6 @@
         "n": "Contabilidade",
         "cat": "Serviços",
         "tipo": "empresarial"
-      },
-      {
-        "n": "Corte de cabelo",
-        "cat": "Vestuário",
-        "tipo": "pessoal"
       },
       {
         "n": "DAS",
