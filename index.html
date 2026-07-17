@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finanças da Família — Davi &amp; Ágda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f0f2f7; --surface:#ffffff; --surface2:#f7f8fc;
+    --border:#dde2ef; --border-strong:#c8d0e4;
+    --text:#1a2035; --text2:#5a6a8a; --text3:#9aaabf;
+    --coral:#ff585e; --coral-hover:#e04449; --coral-dim:rgba(255,88,94,0.10);
+    --navy:#2a3246; --navy2:#1a2035;
+    --success:#16a34a; --success-dim:rgba(22,163,74,0.10);
+    --warn:#d97706; --warn-dim:rgba(217,119,6,0.10);
+    --error:#dc2626; --error-dim:rgba(220,38,38,0.10);
+    --info:#0ea5e9; --info-dim:rgba(14,165,233,0.10);
+    --indigo:#6366f1; --indigo-dim:rgba(99,102,241,0.10);
+    --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:18px; --r-pill:20px;
+    --shadow-sm:0 1px 3px rgba(26,32,53,.06), 0 1px 2px rgba(26,32,53,.04);
+    --shadow-md:0 4px 12px rgba(26,32,53,.08), 0 2px 4px rgba(26,32,53,.04);
+    --shadow-lg:0 8px 24px rgba(26,32,53,.10), 0 4px 8px rgba(26,32,53,.06);
+    --t:0.18s ease;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);}
+  body{font-family:'Montserrat',sans-serif;color:var(--text);font-size:14px;line-height:1.5;}
+  input,select,textarea,button{font-family:inherit;}
+  a{color:var(--coral);text-decoration:none;font-weight:600;}
+  a:hover{color:var(--coral-hover);text-decoration:underline;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--coral) !important;box-shadow:0 0 0 3px var(--coral-dim);}
+  button{cursor:pointer;}
+  @keyframes gff-spin{to{transform:rotate(360deg);}}
+
+  #app{min-height:100vh;display:flex;flex-direction:column;}
+  header{background:var(--surface);border-bottom:3px solid var(--coral);padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:var(--shadow-sm);}
+  .logo{width:48px;height:48px;border-radius:12px;background:var(--coral);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0;}
+  .brand-name{font-size:18px;font-weight:800;line-height:1.1;letter-spacing:-0.3px;}
+  .brand-sub{font-size:11px;font-weight:600;color:var(--coral);letter-spacing:1px;text-transform:uppercase;}
+  .sync-pill{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-pill);padding:5px 12px;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 12px;display:flex;flex-wrap:wrap;}
+  nav button{border:none;background:transparent;padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--text2);border-bottom:3px solid transparent;margin-bottom:-1px;transition:color var(--t);}
+  nav button:hover{color:var(--text);}
+  nav button.active{color:var(--coral);border-bottom-color:var(--coral);}
+
+  main{width:100%;max-width:1180px;margin:0 auto;padding:24px 20px;display:flex;flex-direction:column;gap:20px;flex:1;}
+  footer{text-align:center;padding:20px;color:var(--text3);}
+  footer .cap{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;}
+  footer .line{font-size:12px;color:var(--text2);margin-top:2px;}
+
+  h1{margin:0;font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:14px;}
+  .card-title{margin:0;font-size:11px;font-weight:700;color:var(--coral);text-transform:uppercase;letter-spacing:1px;}
+  .card-title.green{color:var(--success);}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow-sm);}
+  .stat-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;}
+  .stat-value{font-size:24px;font-weight:900;line-height:1;}
+  .stat-sub{font-size:11px;color:var(--text2);margin-top:4px;font-weight:500;}
+  .grid-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;}
+  .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
+  .grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;}
+  .grid-minicards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
+  .grid-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;}
+
+  .field{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;display:flex;flex-direction:column;gap:5px;}
+  .field.full{grid-column:1 / -1;}
+  .field-filter{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;display:flex;flex-direction:column;gap:4px;}
+  .inp{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--text);background:var(--surface2);transition:border-color var(--t);width:100%;}
+  .inp-sm{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r-md);font-size:13px;font-weight:500;color:var(--text);background:var(--surface2);transition:border-color var(--t);}
+  select.inp, select.inp-sm{cursor:pointer;}
+
+  .btn{border:none;padding:10px 20px;border-radius:var(--r-md);font-size:13px;font-weight:700;cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary{background:var(--coral);color:#fff;}
+  .btn-primary:hover{background:var(--coral-hover);box-shadow:0 4px 12px rgba(255,88,94,.35);}
+  .btn-primary:disabled{opacity:0.6;cursor:not-allowed;}
+  .btn-secondary{background:#fff;color:var(--text);border:1.5px solid var(--border);}
+  .btn-secondary:hover{border-color:var(--coral);color:var(--coral);}
+  .btn-green{background:var(--success);color:#fff;}
+  .btn-green:hover{background:#128a3e;box-shadow:0 4px 12px rgba(22,163,74,.3);}
+  .btn-tiny{background:#fff;color:var(--text);border:1.5px solid var(--border);padding:6px 12px;border-radius:var(--r-sm);font-size:11px;font-weight:700;}
+  .btn-tiny:hover{border-color:var(--coral);color:var(--coral);}
+  .btn-tiny.danger:hover{border-color:var(--error);color:var(--error);}
+  .btn-translucent{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);padding:6px 12px;border-radius:var(--r-sm);font-size:11px;font-weight:700;}
+  .btn-translucent:hover{background:rgba(255,255,255,.22);}
+
+  .empty-panel{border:1.5px dashed var(--border-strong);border-radius:var(--r-xl);padding:40px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;background:#fff;}
+  .empty-title{font-size:18px;font-weight:800;letter-spacing:-0.3px;}
+  .empty-text{font-size:13px;font-weight:500;color:var(--text2);max-width:460px;line-height:1.6;}
+
+  .bar-row{display:flex;align-items:center;gap:10px;}
+  .bar-name{width:110px;font-size:12px;font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bar-track{flex:1;height:9px;background:var(--bg);border-radius:5px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:5px;background:var(--coral);}
+  .bar-val{width:96px;text-align:right;font-size:12px;font-weight:700;color:var(--text);}
+
+  .mini-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;display:flex;flex-direction:column;gap:8px;}
+  .mini-top{display:flex;justify-content:space-between;gap:8px;font-size:13px;}
+  .mini-name{font-weight:700;}
+  .mini-bank{color:var(--text2);font-weight:500;}
+  .mini-val{font-size:20px;font-weight:900;}
+  .mini-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+  .mini-fill{height:100%;}
+  .mini-note{font-size:11px;color:var(--text2);font-weight:500;}
+
+  .navy-tile{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r-xl);padding:18px 20px;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;gap:10px;}
+  .navy-tile .tname{font-size:16px;font-weight:800;}
+  .navy-tile .tbank{font-size:10px;text-transform:uppercase;color:var(--coral);font-weight:700;letter-spacing:0.6px;}
+  .navy-track{height:8px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden;}
+  .navy-fill{height:100%;background:#fff;}
+  .navy-fill.over{background:var(--coral);}
+  .navy-meta{font-size:11px;opacity:.85;font-weight:500;}
+  .navy-actions{display:flex;gap:8px;margin-top:4px;}
+
+  .list-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-sm);}
+  .list-head{display:flex;justify-content:space-between;gap:10px;padding:12px 18px;border-bottom:2px solid var(--border);background:var(--surface2);font-size:11px;font-weight:600;color:var(--text2);flex-wrap:wrap;align-items:center;text-transform:uppercase;letter-spacing:0.6px;}
+  .list-head strong{color:var(--text);font-size:13px;}
+  .list-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;transition:background var(--t);}
+  .list-row:hover{background:var(--surface2);}
+  .list-row:last-child{border-bottom:none;}
+  .row-date{width:52px;font-size:11px;color:var(--text3);font-weight:600;}
+  .row-main{flex:2;min-width:150px;display:flex;flex-direction:column;gap:2px;}
+  .row-desc{font-size:13px;font-weight:700;}
+  .row-sub{font-size:11px;font-weight:500;color:var(--text2);}
+  .row-parc{color:var(--coral);font-weight:700;}
+  .row-val{width:104px;text-align:right;font-size:13px;font-weight:800;}
+  .row-actions{display:flex;gap:6px;}
+  .empty-row{padding:24px 18px;text-align:center;color:var(--text3);font-size:13px;font-weight:500;}
+
+  .pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:var(--r-pill);text-transform:capitalize;}
+  .pill.pessoal{background:var(--info-dim);color:var(--info);}
+  .pill.familiar{background:var(--success-dim);color:var(--success);}
+  .pill.empresarial{background:var(--indigo-dim);color:var(--indigo);}
+
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-pill);padding:5px 10px 5px 12px;font-size:12px;font-weight:600;color:var(--text2);}
+  .chip button{border:none;background:transparent;color:var(--text3);font-weight:800;cursor:pointer;font-size:14px;line-height:1;padding:0 2px;}
+  .chip button:hover{color:var(--error);}
+  .chip-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+
+  .alert{border-radius:var(--r-md);padding:12px 16px;font-size:12px;font-weight:600;border-left:3px solid;}
+  .alert.info{background:var(--info-dim);color:#075985;border-color:var(--info);}
+  .alert.ok{background:var(--success-dim);color:#166534;border-color:var(--success);}
+  .alert.err{background:var(--error-dim);color:#991b1b;border-color:var(--error);}
+
+  .form-err{font-size:11px;color:var(--error);font-weight:600;}
+  .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:gff-spin 0.7s linear infinite;}
+
+  .proj-row{display:flex;align-items:center;gap:12px;}
+  .proj-label{width:120px;font-size:12px;font-weight:600;color:var(--text2);text-transform:capitalize;}
+  .proj-track{flex:1;height:14px;background:var(--bg);border-radius:7px;overflow:hidden;}
+  .proj-fill{height:100%;border-radius:7px;background:var(--coral);}
+  .proj-val{width:100px;text-align:right;font-size:13px;font-weight:800;}
+
+  .chain-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .chain-row:last-child{border-bottom:none;}
+  .chain-main{flex:1;min-width:160px;}
+  .chain-desc{font-size:13px;font-weight:700;}
+  .chain-sub{font-size:11px;color:var(--text2);}
+  .chain-prog{width:160px;max-width:160px;}
+  .chain-track{height:6px;background:var(--bg);border-radius:4px;overflow:hidden;margin-top:4px;}
+  .chain-fill{height:100%;background:var(--success);}
+  .chain-permo{font-size:12px;font-weight:700;width:100px;text-align:right;}
+  .chain-rest{font-size:12px;font-weight:800;color:var(--warn);width:120px;text-align:right;}
+
+  textarea.inp{resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;}
+
+  @media(max-width:640px){
+    .row-val{width:80px;}
+    .bar-name{width:80px;}
+    main{padding:16px 12px;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ==================== Constantes ==================== */
+var CATS = ['Alimentação','Supermercado','Transporte','Saúde','Educação','Lazer','Viagens','Assinaturas','Moradia','Vestuário','Pets','Serviços','Impostos e taxas','Outros'];
+var RCATS = ['Salário','Pró-labore','Distribuição de lucros','Vendas','Serviços prestados','Aluguel','Investimentos','Outros'];
+var TIPOS = ['pessoal','familiar','empresarial'];
+var PESSOAS = ['Davi','Ágda','Ambos'];
+var TIPO_STYLES = {pessoal:'pessoal', familiar:'familiar', empresarial:'empresarial'};
+
+/* ==================== Utilidades ==================== */
+function esc(v){
+  return String(v == null ? '' : v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function todayIso(){ return new Date().toISOString().slice(0,10); }
+function currentMes(){ var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+function addMonths(ym, k){
+  var parts = ym.split('-').map(Number), y = parts[0], m = parts[1];
+  var d = new Date(y, m - 1 + k, 1);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function diffMonths(a, b){
+  var pa = a.split('-').map(Number), pb = b.split('-').map(Number);
+  return (pb[0]-pa[0])*12 + (pb[1]-pa[1]);
+}
+function mesLabel(ym){
+  if(!ym) return '';
+  var p = ym.split('-').map(Number);
+  return new Date(p[0], p[1]-1, 1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+}
+function mesShort(ym){
+  var p = ym.split('-').map(Number);
+  return new Date(p[0], p[1]-1, 1).toLocaleDateString('pt-BR',{month:'short'}).replace('.','');
+}
+function tipoClass(tipo){
+  return (tipo==='pessoal'||tipo==='familiar'||tipo==='empresarial') ? tipo : 'familiar';
+}
+
+/* ==================== App ==================== */
+var App = {
+  state: null,
+  root: null,
+  _pushTimer: null,
+  _confirmTimer: null,
+
+  init: function(){
+    this.root = document.getElementById('app');
+    var mes = currentMes();
+    this.state = {
+      tab: 'dash',
+      cards: [], expenses: [], incomes: [],
+      presets: { despesas: [], receitas: [] },
+      pIn: { despesas: { n:'', cat:'Outros', tipo:'familiar' }, receitas: { n:'', cat:'Salário', tipo:'familiar' } },
+      taxo: { cats: CATS.slice(), recCats: RCATS.slice(), tipos: TIPOS.slice() },
+      tIn: { cats:'', recCats:'', tipos:'' },
+      updatedAt: 0,
+      cfg: { owner:'', repo:'', branch:'main', path:'financas-dados.json', token:'', auto:true, aiProxyUrl:'', aiProxyKey:'' },
+      sync: { st:'off', msg:'', msgKind:'info', last:null },
+      filters: { mes: mes, cardId:'', cat:'', tipo:'', pessoa:'', busca:'', recTipo:'', recPessoa:'' },
+      cardForm: null, expForm: null, incForm: null, formErr: '', confirmDel: null,
+      imp: { cardId:'', mes: mes, tipo:'familiar', pessoa:'Davi', text:'', busy:false, pdfBusy:false, err:'', rows:null },
+      prefs: { ocultarValores:false, mesesProjecao:6, modeloIA:'claude-haiku-4-5' }
+    };
+    this.load();
+    this.bindEvents();
+    this.render();
+    if(this.cfgOk() && this.state.cfg.auto) this.pull(true);
+  },
+
+  /* ---------- Persistência local ---------- */
+  normPresets: function(p){
+    function norm(arr, defCat, defTipo){
+      return (arr || []).map(function(x){
+        return typeof x === 'string' ? {n:x, cat:defCat, tipo:defTipo} : {n:x.n, cat:x.cat||defCat, tipo:x.tipo||defTipo};
+      });
+    }
+    return { despesas: norm(p && p.despesas, 'Outros', 'familiar'), receitas: norm(p && p.receitas, 'Salário', 'familiar') };
+  },
+  normTaxo: function(t){
+    return {
+      cats: (t && t.cats && t.cats.length) ? t.cats : CATS.slice(),
+      recCats: (t && t.recCats && t.recCats.length) ? t.recCats : RCATS.slice(),
+      tipos: (t && t.tipos && t.tipos.length) ? t.tipos : TIPOS.slice()
+    };
+  },
+  load: function(){
+    var self = this;
+    try{
+      var d = JSON.parse(localStorage.getItem('gff-data') || 'null');
+      if(d){
+        self.state.cards = d.cards || [];
+        self.state.expenses = d.expenses || [];
+        self.state.incomes = d.incomes || [];
+        self.state.presets = self.normPresets(d.presets || {});
+        self.state.taxo = self.normTaxo(d.taxo || {});
+        self.state.updatedAt = d.updatedAt || 0;
+      }
+    }catch(e){}
+    try{
+      var c = JSON.parse(localStorage.getItem('gff-cfg') || 'null');
+      if(c) self.state.cfg = Object.assign({}, self.state.cfg, c);
+    }catch(e){}
+    try{
+      var pr = JSON.parse(localStorage.getItem('gff-prefs') || 'null');
+      if(pr) self.state.prefs = Object.assign({}, self.state.prefs, pr);
+    }catch(e){}
+  },
+  persist: function(){
+    var s = this.state;
+    s.updatedAt = Date.now();
+    var data = { version:1, updatedAt: s.updatedAt, cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo };
+    try{ localStorage.setItem('gff-data', JSON.stringify(data)); }catch(e){}
+    if(this.cfgOk() && s.cfg.auto){
+      clearTimeout(this._pushTimer);
+      this._pushTimer = setTimeout(function(){ App.push(true); }, 2500);
+    }
+  },
+  persistCfg: function(){
+    try{ localStorage.setItem('gff-cfg', JSON.stringify(this.state.cfg)); }catch(e){}
+  },
+  persistPrefs: function(){
+    try{ localStorage.setItem('gff-prefs', JSON.stringify(this.state.prefs)); }catch(e){}
+  },
+  fmt: function(v){
+    if(this.state.prefs.ocultarValores) return 'R$ ••••';
+    return 'R$ ' + (v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  },
+
+  /* ---------- GitHub Sync ---------- */
+  cfgOk: function(){ var c = this.state.cfg; return !!(c.owner && c.repo && c.path && c.token); },
+  ghUrl: function(){
+    var c = this.state.cfg;
+    return 'https://api.github.com/repos/' + c.owner + '/' + c.repo + '/contents/' + encodeURIComponent(c.path).replace(/%2F/g,'/');
+  },
+  ghHeaders: function(){
+    return { Authorization: 'Bearer ' + this.state.cfg.token, Accept: 'application/vnd.github+json' };
+  },
+  b64enc: function(str){
+    var bytes = new TextEncoder().encode(str);
+    var bin = '';
+    for(var i=0;i<bytes.length;i+=8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i+8192));
+    return btoa(bin);
+  },
+  b64dec: function(b64){
+    var bin = atob(b64.replace(/\n/g,''));
+    var bytes = new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  },
+  setSync: function(st, msg, kind){
+    this.state.sync.st = st;
+    this.state.sync.msg = msg || '';
+    this.state.sync.msgKind = kind || 'info';
+    if(st === 'ok') this.state.sync.last = new Date();
+    this.render();
+  },
+  pull: function(silent){
+    var self = this;
+    if(!this.cfgOk()){ this.setSync('off','Preencha usuário, repositório, arquivo e token.','err'); return; }
+    this.setSync('busy', silent ? '' : 'Carregando da nuvem…');
+    fetch(this.ghUrl() + '?ref=' + encodeURIComponent(this.state.cfg.branch) + '&t=' + Date.now(), { headers: this.ghHeaders() })
+      .then(function(r){
+        if(r.status === 404){ self.setSync('ok','Arquivo ainda não existe na nuvem. Clique em "Salvar na nuvem agora" para criá-lo.','info'); return null; }
+        if(!r.ok) throw new Error('HTTP ' + r.status + (r.status===401?' — token inválido':r.status===403?' — sem permissão':''));
+        return r.json();
+      })
+      .then(function(j){
+        if(!j) return;
+        var data = JSON.parse(self.b64dec(j.content));
+        var remoteAt = data.updatedAt || 0;
+        if(remoteAt >= self.state.updatedAt || (!self.state.cards.length && !self.state.expenses.length)){
+          self.state.cards = data.cards || [];
+          self.state.expenses = data.expenses || [];
+          self.state.incomes = data.incomes || [];
+          self.state.presets = self.normPresets(data.presets || {});
+          self.state.taxo = self.normTaxo(data.taxo || {});
+          self.state.updatedAt = remoteAt;
+          try{ localStorage.setItem('gff-data', JSON.stringify(data)); }catch(e){}
+          self.setSync('ok', silent ? '' : 'Dados carregados da nuvem.', 'ok');
+        } else {
+          self.setSync('ok', 'Seus dados locais são mais recentes que os da nuvem. Clique em "Salvar na nuvem agora" para enviá-los.', 'info');
+        }
+      })
+      .catch(function(e){ self.setSync('err', 'Falha ao carregar: ' + e.message, 'err'); });
+  },
+  push: function(silent){
+    var self = this;
+    if(!this.cfgOk()){ this.setSync('off','Preencha usuário, repositório, arquivo e token.','err'); return; }
+    this.setSync('busy', silent ? '' : 'Salvando na nuvem…');
+    var sha;
+    fetch(this.ghUrl() + '?ref=' + encodeURIComponent(this.state.cfg.branch) + '&t=' + Date.now(), { headers: this.ghHeaders() })
+      .then(function(g){ return g.ok ? g.json() : null; })
+      .then(function(j){
+        if(j) sha = j.sha;
+        var s = self.state;
+        var data = { version:1, updatedAt: s.updatedAt || Date.now(), cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo };
+        var body = { message: 'Atualização das finanças — ' + new Date().toLocaleString('pt-BR'), content: self.b64enc(JSON.stringify(data,null,2)), branch: s.cfg.branch };
+        if(sha) body.sha = sha;
+        return fetch(self.ghUrl(), { method:'PUT', headers: Object.assign({}, self.ghHeaders(), {'Content-Type':'application/json'}), body: JSON.stringify(body) });
+      })
+      .then(function(r){
+        if(!r.ok) throw new Error('HTTP ' + r.status + (r.status===401?' — token inválido':r.status===403?' — token sem permissão de escrita':r.status===409?' — conflito, carregue da nuvem primeiro':''));
+        self.setSync('ok', silent ? '' : 'Dados salvos na nuvem.', 'ok');
+      })
+      .catch(function(e){ self.setSync('err', 'Falha ao salvar: ' + e.message, 'err'); });
+  },
+
+  /* ---------- Navegação / filtros ---------- */
+  goTab: function(el){ this.state.tab = el.dataset.tab; this.state.formErr=''; this.state.confirmDel=null; this.render(); },
+  filtField: function(el){ this.state.filters[el.dataset.k] = el.value; this.render(); },
+
+  /* ---------- Cartões ---------- */
+  openCardForm: function(){ this.state.cardForm = {id:null, nome:'', banco:'', limite:'', melhorDia:'', venc:''}; this.state.formErr=''; this.render(); },
+  editCard: function(el){
+    var c = this.state.cards.find(function(x){ return x.id === el.dataset.id; });
+    if(c) this.state.cardForm = {id:c.id, nome:c.nome, banco:c.banco, limite:String(c.limite||''), melhorDia:String(c.melhorDia||''), venc:String(c.venc||'')};
+    this.state.formErr=''; this.render();
+  },
+  cardField: function(el){ this.state.cardForm[el.dataset.k] = el.value; },
+  saveCard: function(){
+    var f = this.state.cardForm;
+    if(!f.nome.trim()){ this.state.formErr = 'Informe o nome do cartão.'; this.render(); return; }
+    var card = { id: f.id || uid(), nome: f.nome.trim(), banco: (f.banco||'').trim(), limite: Number(f.limite)||0,
+      melhorDia: Math.min(31, Math.max(1, Number(f.melhorDia)||1)), venc: Math.min(31, Math.max(1, Number(f.venc)||1)) };
+    if(f.id) this.state.cards = this.state.cards.map(function(c){ return c.id === f.id ? card : c; });
+    else this.state.cards.push(card);
+    this.state.cardForm = null; this.state.formErr='';
+    this.persist(); this.render();
+  },
+  cancelCard: function(){ this.state.cardForm = null; this.state.formErr=''; this.render(); },
+  delCard: function(el){
+    var id = el.dataset.id;
+    if(this.state.confirmDel !== 'c'+id){
+      this.state.confirmDel = 'c'+id; this.render();
+      var self = this;
+      clearTimeout(this._confirmTimer);
+      this._confirmTimer = setTimeout(function(){ if(self.state.confirmDel==='c'+id){ self.state.confirmDel=null; self.render(); } }, 3000);
+      return;
+    }
+    this.state.cards = this.state.cards.filter(function(c){ return c.id !== id; });
+    this.state.confirmDel = null;
+    this.persist(); this.render();
+  },
+
+  /* ---------- Despesas ---------- */
+  findPreset: function(g, name){
+    var v = (name||'').trim().toLowerCase();
+    return (this.state.presets[g]||[]).find(function(x){ return x.n.toLowerCase() === v; });
+  },
+  openExpForm: function(){
+    this.state.expForm = { id:null, desc:'', valor:'', data: todayIso(), fatura: this.state.filters.mes,
+      cardId: this.state.cards[0] ? this.state.cards[0].id : 'none', cat:'Outros', tipo:'familiar', pessoa:'Davi', pAtual:'', pTotal:'' };
+    this.state.formErr=''; this.render();
+  },
+  editExp: function(el){
+    var x = this.state.expenses.find(function(v){ return v.id === el.dataset.id; });
+    if(x) this.state.expForm = { id:x.id, desc:x.desc, valor:String(x.valor), data:x.data||'', fatura:x.fatura,
+      cardId:x.cardId||'none', cat:x.cat, tipo:x.tipo, pessoa:x.pessoa, pAtual: x.pAtual?String(x.pAtual):'', pTotal: x.pTotal?String(x.pTotal):'' };
+    this.state.formErr=''; this.render();
+  },
+  expField: function(el){
+    var k = el.dataset.k, v = el.value;
+    this.state.expForm[k] = v;
+    if(k === 'desc'){ var p = this.findPreset('despesas', v); if(p){ this.state.expForm.cat = p.cat; this.state.expForm.tipo = p.tipo; } }
+    this.render();
+  },
+  saveExp: function(){
+    var f = this.state.expForm;
+    var valor = Number(String(f.valor).replace(',','.'));
+    if(!f.desc.trim()){ this.state.formErr = 'Informe a descrição.'; this.render(); return; }
+    if(!valor){ this.state.formErr = 'Informe um valor válido.'; this.render(); return; }
+    var pTotal = Number(f.pTotal) || null;
+    var exp = { id: f.id || uid(), desc: f.desc.trim(), valor: valor, data: f.data,
+      fatura: f.fatura || (f.data||'').slice(0,7) || this.state.filters.mes,
+      cardId: f.cardId === 'none' ? null : f.cardId, cat: f.cat, tipo: f.tipo, pessoa: f.pessoa,
+      pAtual: pTotal ? (Number(f.pAtual)||1) : null, pTotal: pTotal };
+    if(f.id) this.state.expenses = this.state.expenses.map(function(x){ return x.id === f.id ? exp : x; });
+    else this.state.expenses.push(exp);
+    this.state.expForm = null; this.state.formErr='';
+    this.persist(); this.render();
+  },
+  cancelExp: function(){ this.state.expForm = null; this.state.formErr=''; this.render(); },
+  delExp: function(el){
+    var id = el.dataset.id;
+    if(this.state.confirmDel !== 'e'+id){
+      this.state.confirmDel = 'e'+id; this.render();
+      var self = this;
+      clearTimeout(this._confirmTimer);
+      this._confirmTimer = setTimeout(function(){ if(self.state.confirmDel==='e'+id){ self.state.confirmDel=null; self.render(); } }, 3000);
+      return;
+    }
+    this.state.expenses = this.state.expenses.filter(function(x){ return x.id !== id; });
+    this.state.confirmDel = null;
+    this.persist(); this.render();
+  },
+  quickCat: function(el){
+    var id = el.dataset.id, cat = el.value;
+    this.state.expenses = this.state.expenses.map(function(x){ return x.id === id ? Object.assign({}, x, {cat:cat}) : x; });
+    this.persist(); this.render();
+  },
+
+  /* ---------- Receitas ---------- */
+  openIncForm: function(){
+    this.state.incForm = { id:null, desc:'', valor:'', data: todayIso(), mes: this.state.filters.mes, cat:'Salário', tipo:'familiar', pessoa:'Davi' };
+    this.state.formErr=''; this.render();
+  },
+  editInc: function(el){
+    var x = this.state.incomes.find(function(v){ return v.id === el.dataset.id; });
+    if(x) this.state.incForm = { id:x.id, desc:x.desc, valor:String(x.valor), data:x.data||'', mes:x.mes, cat:x.cat, tipo:x.tipo, pessoa:x.pessoa };
+    this.state.formErr=''; this.render();
+  },
+  incField: function(el){
+    var k = el.dataset.k, v = el.value;
+    this.state.incForm[k] = v;
+    if(k === 'desc'){ var p = this.findPreset('receitas', v); if(p){ this.state.incForm.cat = p.cat; this.state.incForm.tipo = p.tipo; } }
+    this.render();
+  },
+  saveInc: function(){
+    var f = this.state.incForm;
+    var valor = Number(String(f.valor).replace(',','.'));
+    if(!f.desc.trim()){ this.state.formErr = 'Informe a descrição.'; this.render(); return; }
+    if(!valor){ this.state.formErr = 'Informe um valor válido.'; this.render(); return; }
+    var inc = { id: f.id || uid(), desc: f.desc.trim(), valor: valor, data: f.data,
+      mes: f.mes || (f.data||'').slice(0,7) || this.state.filters.mes, cat: f.cat, tipo: f.tipo, pessoa: f.pessoa };
+    if(f.id) this.state.incomes = this.state.incomes.map(function(x){ return x.id === f.id ? inc : x; });
+    else this.state.incomes.push(inc);
+    this.state.incForm = null; this.state.formErr='';
+    this.persist(); this.render();
+  },
+  cancelInc: function(){ this.state.incForm = null; this.state.formErr=''; this.render(); },
+  delInc: function(el){
+    var id = el.dataset.id;
+    if(this.state.confirmDel !== 'i'+id){
+      this.state.confirmDel = 'i'+id; this.render();
+      var self = this;
+      clearTimeout(this._confirmTimer);
+      this._confirmTimer = setTimeout(function(){ if(self.state.confirmDel==='i'+id){ self.state.confirmDel=null; self.render(); } }, 3000);
+      return;
+    }
+    this.state.incomes = this.state.incomes.filter(function(x){ return x.id !== id; });
+    this.state.confirmDel = null;
+    this.persist(); this.render();
+  },
+
+  /* ---------- Presets (nomes padrão) ---------- */
+  presetInput: function(el){ this.state.pIn[el.dataset.g][el.dataset.k] = el.value; },
+  addPreset: function(el){
+    var g = el.dataset.g, f = this.state.pIn[g], n = (f.n||'').trim();
+    if(!n) return;
+    var cur = (this.state.presets[g]||[]).filter(function(x){ return x.n.toLowerCase() !== n.toLowerCase(); });
+    cur.push({ n:n, cat:f.cat, tipo:f.tipo });
+    cur.sort(function(a,b){ return a.n.localeCompare(b.n,'pt-BR'); });
+    this.state.presets[g] = cur;
+    this.state.pIn[g].n = '';
+    this.persist(); this.render();
+  },
+  delPreset: function(el){
+    var g = el.dataset.g, n = el.dataset.n;
+    this.state.presets[g] = (this.state.presets[g]||[]).filter(function(x){ return x.n !== n; });
+    this.persist(); this.render();
+  },
+
+  /* ---------- Taxonomias (categorias/tipos) ---------- */
+  taxoInput: function(el){ this.state.tIn[el.dataset.g] = el.value; },
+  addTaxo: function(el){
+    var g = el.dataset.g, v = (this.state.tIn[g]||'').trim();
+    if(!v) return;
+    if(g === 'tipos') v = v.toLowerCase();
+    var cur = this.state.taxo[g] || [];
+    if(cur.some(function(x){ return x.toLowerCase() === v.toLowerCase(); })){ this.state.tIn[g]=''; this.render(); return; }
+    this.state.taxo[g] = cur.concat([v]);
+    this.state.tIn[g] = '';
+    this.persist(); this.render();
+  },
+  delTaxo: function(el){
+    var g = el.dataset.g, n = el.dataset.n;
+    this.state.taxo[g] = (this.state.taxo[g]||[]).filter(function(x){ return x !== n; });
+    this.persist(); this.render();
+  },
+
+  /* ---------- Importar fatura ---------- */
+  impField: function(el){ this.state.imp[el.dataset.k] = el.value; this.render(); },
+  onPdf: function(el, ev){
+    var f = ev.target.files && ev.target.files[0]; ev.target.value = '';
+    if(!f) return;
+    var self = this;
+    this.state.imp.pdfBusy = true; this.state.imp.err=''; this.render();
+    Promise.resolve().then(function(){
+      return import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
+    }).then(function(pdfjs){
+      pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+      return f.arrayBuffer().then(function(buf){ return pdfjs.getDocument({data:buf}).promise; });
+    }).then(function(doc){
+      var pagesText = [];
+      function readPage(p){
+        return doc.getPage(p).then(function(pg){ return pg.getTextContent(); }).then(function(tc){
+          var line='', lastY=null, text='';
+          tc.items.forEach(function(it){
+            if(lastY !== null && Math.abs(it.transform[5]-lastY) > 2){ text += line.trim() + '\n'; line=''; }
+            line += it.str + ' ';
+            lastY = it.transform[5];
+          });
+          text += line.trim() + '\n';
+          pagesText.push(text);
+        });
+      }
+      var chain = Promise.resolve();
+      for(var p=1; p<=doc.numPages; p++){ (function(p){ chain = chain.then(function(){ return readPage(p); }); })(p); }
+      return chain.then(function(){ return pagesText.join(''); });
+    }).then(function(text){
+      self.state.imp.text = text.trim();
+      self.state.imp.pdfBusy = false;
+      self.render();
+    }).catch(function(err){
+      self.state.imp.pdfBusy = false;
+      self.state.imp.err = 'Não consegui ler este PDF (' + err.message + '). Se ele for protegido ou digitalizado como imagem, copie o texto da fatura e cole na caixa acima.';
+      self.render();
+    });
+  },
+  parseNow: function(){
+    var self = this, imp = this.state.imp;
+    if(imp.busy) return;
+    if(!imp.text.trim()){ this.state.imp.err = 'Cole o texto da fatura ou envie um PDF primeiro.'; this.render(); return; }
+    if(!imp.cardId){ this.state.imp.err = 'Selecione o cartão desta fatura.'; this.render(); return; }
+    if(!this.state.cfg.aiProxyUrl){ this.state.imp.err = 'Configure o endpoint do proxy de IA na aba Nuvem antes de interpretar faturas.'; this.render(); return; }
+    this.state.imp.busy = true; this.state.imp.err=''; this.state.imp.rows = null; this.render();
+    var prompt = 'Você extrai lançamentos de faturas de cartão de crédito brasileiras.\n\n' +
+      'TEXTO DA FATURA:\n"""\n' + imp.text.slice(0,30000) + '\n"""\n\n' +
+      'Extraia TODOS os lançamentos (compras, assinaturas, tarifas; estornos/créditos como valor negativo). ' +
+      'IGNORE linhas de pagamento de fatura recebido, limites, totais, saldos e juros informativos.\n' +
+      'Identifique compras parceladas por padrões como "3/10", "PARC 03/10", "parcela 03 de 10".\n' +
+      'Classifique cada lançamento em UMA categoria desta lista exata: ' + this.state.taxo.cats.join(', ') + '.\n' +
+      'A fatura é do mês ' + imp.mes + '; se a data não tiver ano, deduza o ano por isso.\n' +
+      'Responda SOMENTE com um array JSON válido, sem texto antes ou depois, no formato:\n' +
+      '[{"data":"AAAA-MM-DD","descricao":"...","valor":123.45,"parcelaAtual":3,"parcelasTotal":10,"categoria":"Alimentação"}]\n' +
+      'Use null em parcelaAtual/parcelasTotal quando não for parcelado. "valor" é o valor da parcela lançada na fatura, número com ponto decimal.';
+    var headers = { 'Content-Type': 'application/json' };
+    if(this.state.cfg.aiProxyKey) headers['x-proxy-key'] = this.state.cfg.aiProxyKey;
+    fetch(this.state.cfg.aiProxyUrl, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ model: this.state.prefs.modeloIA || 'claude-haiku-4-5', max_tokens: 16000, messages: [{role:'user', content: prompt}] })
+    }).then(function(r){
+      if(!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ' — ' + t.slice(0,200)); });
+      return r.json();
+    }).then(function(data){
+      var textOut = '';
+      if(data && Array.isArray(data.content)){
+        data.content.forEach(function(block){ if(block.type === 'text') textOut += block.text; });
+      } else if(typeof data === 'string'){
+        textOut = data;
+      } else if(data && data.text){
+        textOut = data.text;
+      }
+      var m = textOut.match(/\[[\s\S]*\]/);
+      if(!m) throw new Error('a resposta não continha lançamentos');
+      var arr = JSON.parse(m[0]);
+      if(!Array.isArray(arr) || !arr.length) throw new Error('nenhum lançamento identificado');
+      var rows = arr.map(function(r){
+        return {
+          data: typeof r.data === 'string' ? r.data : '',
+          desc: String(r.descricao || r.desc || '').trim() || 'Lançamento',
+          valor: Number(r.valor) || 0,
+          pAtual: r.parcelaAtual ? Number(r.parcelaAtual) : null,
+          pTotal: r.parcelasTotal ? Number(r.parcelasTotal) : null,
+          cat: self.state.taxo.cats.indexOf(r.categoria) !== -1 ? r.categoria : 'Outros',
+          tipo: imp.tipo, pessoa: imp.pessoa, inc: true
+        };
+      }).filter(function(r){ return r.valor !== 0; });
+      self.state.imp.busy = false; self.state.imp.rows = rows;
+      self.render();
+    }).catch(function(e){
+      self.state.imp.busy = false;
+      self.state.imp.err = 'Falha ao interpretar a fatura: ' + e.message + '. Tente novamente ou reduza o texto colado.';
+      self.render();
+    });
+  },
+  parsedField: function(el){
+    var i = Number(el.dataset.i), k = el.dataset.k, v = el.value;
+    this.state.imp.rows[i][k] = v;
+  },
+  toggleRow: function(el){
+    var i = Number(el.dataset.i);
+    this.state.imp.rows[i].inc = el.checked;
+    this.render();
+  },
+  clearImport: function(){ this.state.imp.rows = null; this.render(); },
+  confirmImport: function(){
+    var imp = this.state.imp;
+    var novos = (imp.rows||[]).filter(function(r){ return r.inc; }).map(function(r){
+      return { id: uid(), desc: r.desc, valor: Number(r.valor)||0, data: r.data, fatura: imp.mes,
+        cardId: imp.cardId || null, cat: r.cat, tipo: r.tipo, pessoa: r.pessoa,
+        pAtual: r.pTotal ? (r.pAtual || 1) : null, pTotal: r.pTotal || null };
+    });
+    this.state.expenses = this.state.expenses.concat(novos);
+    this.state.imp.rows = null; this.state.imp.text = '';
+    this.state.tab = 'exp';
+    this.state.filters = Object.assign({}, this.state.filters, { mes: imp.mes, cardId:'', cat:'', tipo:'', pessoa:'', busca:'' });
+    this.persist(); this.render();
+  },
+
+  /* ---------- Nuvem / config ---------- */
+  cfgField: function(el){
+    var k = el.dataset.k, v = k === 'auto' ? el.checked : el.value;
+    this.state.cfg[k] = v;
+    this.persistCfg();
+    if(k !== 'token' && k !== 'aiProxyUrl' && k !== 'aiProxyKey') this.render();
+  },
+  pullCloud: function(){ this.pull(false); },
+  pushCloud: function(){ this.push(false); },
+  exportJson: function(){
+    var s = this.state;
+    var data = { version:1, updatedAt: s.updatedAt, cards: s.cards, expenses: s.expenses, incomes: s.incomes, presets: s.presets, taxo: s.taxo };
+    var blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'financas-dados.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+  },
+  onImportFile: function(el, ev){
+    var f = ev.target.files && ev.target.files[0]; ev.target.value = '';
+    if(!f) return;
+    var self = this;
+    f.text().then(function(txt){
+      var data = JSON.parse(txt);
+      self.state.cards = data.cards || [];
+      self.state.expenses = data.expenses || [];
+      self.state.incomes = data.incomes || [];
+      self.state.presets = self.normPresets(data.presets || {});
+      self.state.taxo = self.normTaxo(data.taxo || {});
+      self.persist();
+      self.setSync(self.state.sync.st, 'Dados restaurados do arquivo.', 'ok');
+    }).catch(function(err){
+      self.setSync(self.state.sync.st, 'Arquivo inválido: ' + err.message, 'err');
+    });
+  },
+
+  /* ---------- Preferências (tweaks) ---------- */
+  prefField: function(el){
+    var k = el.dataset.k;
+    var v = (k === 'ocultarValores') ? el.checked : el.value;
+    if(k === 'mesesProjecao') v = Math.max(3, Math.min(24, Number(v)||6));
+    this.state.prefs[k] = v;
+    this.persistPrefs();
+    this.render();
+  },
+
+  /* ---------- Cálculos de parcelas/projeção ---------- */
+  chainsCalc: function(){
+    var map = {};
+    this.state.expenses.forEach(function(x){
+      if(!x.pTotal || !x.pAtual) return;
+      var key = x.desc.toLowerCase().replace(/\s+/g,' ').trim() + '|' + x.pTotal + '|' + x.valor.toFixed(2);
+      var prev = map[key];
+      if(!prev || x.pAtual > prev.pAtual || (x.pAtual === prev.pAtual && x.fatura > prev.fatura)) map[key] = x;
+    });
+    return Object.keys(map).map(function(k){ return map[k]; }).filter(function(x){ return x.pAtual < x.pTotal; });
+  },
+  committedIn: function(month){
+    var real = 0;
+    this.state.expenses.forEach(function(x){ if(x.fatura === month) real += x.valor; });
+    var virt = 0;
+    this.chainsCalc().forEach(function(c){
+      var k = diffMonths(c.fatura, month);
+      if(k >= 1 && c.pAtual + k <= c.pTotal) virt += c.valor;
+    });
+    return real + virt;
+  },
+
+  /* ==================== RENDER ==================== */
+  render: function(){
+    var s = this.state;
+    var html = this.renderHeader() + this.renderNav();
+    html += '<main>';
+    if(s.tab === 'dash') html += this.renderDash();
+    else if(s.tab === 'exp') html += this.renderExp();
+    else if(s.tab === 'rec') html += this.renderRec();
+    else if(s.tab === 'imp') html += this.renderImp();
+    else if(s.tab === 'proj') html += this.renderProj();
+    else if(s.tab === 'cad') html += this.renderCad();
+    else if(s.tab === 'sync') html += this.renderSync();
+    html += '</main>';
+    html += '<footer><div class="cap">Finanças da Família</div><div class="line">Davi &amp; Ágda · Clube do Viajante</div></footer>';
+    this.root.innerHTML = html;
+  },
+
+  renderHeader: function(){
+    var ss = this.state.sync;
+    var states = {
+      off: ['var(--border-strong)', 'Nuvem não configurada'],
+      busy: ['var(--warn)', 'Sincronizando…'],
+      ok: ['var(--success)', 'Sincronizado' + (ss.last ? ' · ' + ss.last.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '')],
+      err: ['var(--error)', 'Erro de sincronização']
+    };
+    var st = states[ss.st] || states.off;
+    return '<header>' +
+      '<div class="logo">R$</div>' +
+      '<div><div class="brand-name">Finanças da Família</div><div class="brand-sub">Davi &amp; Ágda</div></div>' +
+      '<div style="flex:1"></div>' +
+      '<div class="sync-pill"><span class="sync-dot" style="background:' + st[0] + '"></span><span>' + esc(st[1]) + '</span></div>' +
+      '</header>';
+  },
+  renderNav: function(){
+    var s = this.state;
+    var defs = [['dash','Visão geral'],['exp','Despesas'],['rec','Receitas'],['imp','Importar fatura'],['proj','Projeção'],['cad','Cadastros'],['sync','Nuvem']];
+    var html = '<nav>';
+    defs.forEach(function(d){
+      html += '<button data-act="goTab" data-tab="' + d[0] + '" class="' + (s.tab===d[0]?'active':'') + '">' + esc(d[1]) + '</button>';
+    });
+    html += '</nav>';
+    return html;
+  },
+
+  /* ---- Dash ---- */
+  renderDash: function(){
+    var s = this.state, self = this;
+    var mes = s.filters.mes;
+    var monthExp = s.expenses.filter(function(x){ return x.fatura === mes; });
+    var hasExp = s.expenses.length > 0;
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<div class="row"><h1 style="flex:1">Visão geral</h1>' +
+      '<label class="field-filter" style="flex-direction:row;align-items:center;gap:8px">Mês da fatura ' +
+      '<input type="month" class="inp-sm" value="' + esc(mes) + '" data-act="filtField" data-k="mes"></label></div>';
+
+    if(hasExp){
+      var sumBy = function(arr, f){ return arr.reduce(function(t,x){ return t + (f(x) ? x.valor : 0); }, 0); };
+      var totalMesV = monthExp.reduce(function(t,x){ return t+x.valor; }, 0);
+      var monthInc = s.incomes.filter(function(x){ return x.mes === mes; });
+      var totRecV = monthInc.reduce(function(t,x){ return t+x.valor; }, 0);
+      var saldoV = totRecV - totalMesV;
+      var projVals0 = self.committedIn(addMonths(mes,1));
+
+      html += '<div class="grid-stats">';
+      html += this.statCard('Receitas do mês', this.fmt(totRecV), 'var(--success)');
+      html += this.statCard('Despesas do mês', this.fmt(totalMesV), 'var(--coral)');
+      html += this.statCard('Pessoal', this.fmt(sumBy(monthExp, function(x){ return x.tipo==='pessoal'; })), 'var(--text)');
+      html += this.statCard('Familiar', this.fmt(sumBy(monthExp, function(x){ return x.tipo==='familiar'; })), 'var(--text)');
+      html += this.statCard('Empresarial', this.fmt(sumBy(monthExp, function(x){ return x.tipo==='empresarial'; })), 'var(--text)');
+      html += this.statCard('Próximo mês', this.fmt(projVals0), 'var(--warn)', 'já comprometido');
+      html += this.statCard('Saldo do mês', this.fmt(saldoV), saldoV>=0?'var(--success)':'var(--error)', 'receitas − despesas');
+      html += '</div>';
+
+      var catMap = {};
+      monthExp.forEach(function(x){ catMap[x.cat] = (catMap[x.cat]||0) + x.valor; });
+      var catEntries = Object.keys(catMap).map(function(k){ return [k, catMap[k]]; }).sort(function(a,b){ return b[1]-a[1]; });
+      var catMax = Math.max(1, catEntries.reduce(function(m,e){ return Math.max(m,e[1]); }, 0));
+      var catHtml = catEntries.map(function(e){
+        var pct = Math.round(e[1]/catMax*100);
+        return '<div class="bar-row"><div class="bar-name">' + esc(e[0]) + '</div><div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div><div class="bar-val">' + self.fmt(e[1]) + '</div></div>';
+      }).join('') || '<div class="empty-row">Sem despesas neste mês.</div>';
+
+      var monthKeys = []; for(var k=-5;k<=0;k++) monthKeys.push(addMonths(mes,k));
+      var monthVals = monthKeys.map(function(m){ return s.expenses.filter(function(x){ return x.fatura===m; }).reduce(function(t,x){ return t+x.valor; },0); });
+      var mMax = Math.max(1, Math.max.apply(null, monthVals));
+      var barsHtml = monthKeys.map(function(m,i){
+        var pct = Math.round(monthVals[i]/mMax*100);
+        var color = m === mes ? 'var(--coral)' : 'var(--border-strong)';
+        var valLabel = s.prefs.ocultarValores ? '' : (monthVals[i] ? Math.round(monthVals[i]).toLocaleString('pt-BR') : '');
+        return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">' +
+          '<div style="font-size:10px;font-weight:600;color:var(--text3)">' + esc(valLabel) + '</div>' +
+          '<div style="width:100%;max-width:44px;border-radius:6px 6px 0 0;background:' + color + ';height:' + pct + '%;min-height:2px"></div>' +
+          '<div style="font-size:10px;color:var(--text2);font-weight:700;text-transform:uppercase">' + esc(mesShort(m)) + '</div></div>';
+      }).join('');
+
+      html += '<div class="grid-2">' +
+        '<div class="card"><h2 class="card-title">Gastos por categoria — ' + esc(mesLabel(mes)) + '</h2><div style="display:flex;flex-direction:column;gap:9px">' + catHtml + '</div></div>' +
+        '<div class="card"><h2 class="card-title">Evolução mensal</h2><div style="display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px">' + barsHtml + '</div></div>' +
+        '</div>';
+
+      var cardTiles = s.cards.map(function(c){
+        var uso = monthExp.filter(function(x){ return x.cardId===c.id; }).reduce(function(t,x){ return t+x.valor; },0);
+        var pct = c.limite ? Math.min(100, Math.round(uso/c.limite*100)) : 0;
+        return '<div class="mini-card"><div class="mini-top"><span class="mini-name">' + esc(c.nome) + '</span><span class="mini-bank">' + esc(c.banco) + '</span></div>' +
+          '<div class="mini-val">' + self.fmt(uso) + '</div>' +
+          '<div class="mini-track"><div class="mini-fill" style="width:' + pct + '%;background:' + (pct>80?'var(--error)':'var(--coral)') + '"></div></div>' +
+          '<div class="mini-note">' + pct + '% do limite de ' + self.fmt(c.limite) + '</div></div>';
+      }).join('') || '<div class="empty-row">Nenhum cartão cadastrado.</div>';
+
+      html += '<div class="card"><div class="row"><h2 class="card-title" style="flex:1">Faturas por cartão — ' + esc(mesLabel(mes)) + '</h2>' +
+        '<button class="btn-tiny" data-act="goTab" data-tab="cad">Gerenciar cartões</button></div>' +
+        '<div class="grid-minicards">' + cardTiles + '</div></div>';
+    } else {
+      html += '<div class="empty-panel"><div class="empty-title">Comece por aqui</div>' +
+        '<div class="empty-text">Cadastre seus cartões, depois importe uma fatura (texto ou PDF) ou lance despesas manualmente. Os gráficos e projeções aparecem automaticamente.</div>' +
+        '<div class="row" style="justify-content:center">' +
+        '<button class="btn btn-primary" data-act="goTab" data-tab="cad">1 · Cadastrar cartões</button>' +
+        '<button class="btn btn-secondary" data-act="goTab" data-tab="imp">2 · Importar fatura</button>' +
+        '<button class="btn btn-secondary" data-act="goTab" data-tab="sync">3 · Configurar nuvem</button>' +
+        '</div></div>';
+    }
+    html += '</div>';
+    return html;
+  },
+  statCard: function(label, value, color, sub){
+    return '<div class="stat"><div class="stat-label">' + esc(label) + '</div><div class="stat-value" style="color:' + color + '">' + value + '</div>' + (sub?'<div class="stat-sub">'+esc(sub)+'</div>':'') + '</div>';
+  },
+
+  /* ---- Despesas ---- */
+  cardOptionsHtml: function(selected){
+    var s = this.state;
+    var html = '<option value="none"' + (selected==='none'?' selected':'') + '>Sem cartão (débito/dinheiro)</option>';
+    s.cards.forEach(function(c){ html += '<option value="'+esc(c.id)+'"' + (selected===c.id?' selected':'') + '>'+esc(c.nome)+'</option>'; });
+    return html;
+  },
+  optionsHtml: function(list, selected, capitalize){
+    return list.map(function(v){ return '<option value="'+esc(v)+'"' + (selected===v?' selected':'') + (capitalize?' style="text-transform:capitalize"':'') + '>'+esc(v)+'</option>'; }).join('');
+  },
+  renderExp: function(){
+    var s = this.state, self = this, f = s.filters;
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<div class="row"><h1 style="flex:1">Despesas</h1><button class="btn btn-primary" data-act="openExpForm">+ Nova despesa</button></div>';
+
+    html += '<div class="card" style="flex-direction:row;flex-wrap:wrap;gap:14px">';
+    html += '<label class="field-filter">Mês da fatura<input type="month" class="inp-sm" value="'+esc(f.mes)+'" data-act="filtField" data-k="mes"></label>';
+    html += '<label class="field-filter">Cartão<select class="inp-sm" data-act="filtField" data-k="cardId">' +
+      '<option value=""'+(f.cardId===''?' selected':'')+'>Todos</option><option value="none"'+(f.cardId==='none'?' selected':'')+'>Sem cartão</option>' +
+      s.cards.map(function(c){ return '<option value="'+esc(c.id)+'"'+(f.cardId===c.id?' selected':'')+'>'+esc(c.nome)+'</option>'; }).join('') + '</select></label>';
+    html += '<label class="field-filter">Categoria<select class="inp-sm" data-act="filtField" data-k="cat"><option value="">Todas</option>' + this.optionsHtml(s.taxo.cats, f.cat) + '</select></label>';
+    html += '<label class="field-filter">Tipo<select class="inp-sm" data-act="filtField" data-k="tipo" style="text-transform:capitalize"><option value="">Todos</option>' + this.optionsHtml(s.taxo.tipos, f.tipo, true) + '</select></label>';
+    html += '<label class="field-filter">Pessoa<select class="inp-sm" data-act="filtField" data-k="pessoa"><option value="">Todas</option>' + this.optionsHtml(PESSOAS, f.pessoa) + '</select></label>';
+    html += '<label class="field-filter" style="flex:1;min-width:140px">Buscar<input class="inp-sm" value="'+esc(f.busca)+'" data-act="filtField" data-k="busca" placeholder="Descrição…"></label>';
+    html += '</div>';
+
+    if(s.expForm){
+      var ef = s.expForm;
+      html += '<div class="card" style="box-shadow:var(--shadow-md)"><h2 class="card-title">' + (ef.id?'Editar despesa':'Nova despesa') + '</h2>';
+      html += '<div class="grid-form">';
+      html += '<label class="field full">Descrição<input class="inp" value="'+esc(ef.desc)+'" data-act="expField" data-k="desc" list="dl-despesas" placeholder="Escolha um nome cadastrado ou digite um novo">' +
+        '<datalist id="dl-despesas">' + s.presets.despesas.map(function(p){ return '<option value="'+esc(p.n)+'">'; }).join('') + '</datalist></label>';
+      html += '<label class="field">Valor da parcela (R$)<input type="number" step="0.01" class="inp" value="'+esc(ef.valor)+'" data-act="expField" data-k="valor" placeholder="0,00"></label>';
+      html += '<label class="field">Data da compra<input type="date" class="inp" value="'+esc(ef.data)+'" data-act="expField" data-k="data"></label>';
+      html += '<label class="field">Mês da fatura<input type="month" class="inp" value="'+esc(ef.fatura)+'" data-act="expField" data-k="fatura"></label>';
+      html += '<label class="field">Cartão<select class="inp" data-act="expField" data-k="cardId">' + this.cardOptionsHtml(ef.cardId) + '</select></label>';
+      html += '<label class="field">Categoria<select class="inp" data-act="expField" data-k="cat">' + this.optionsHtml(s.taxo.cats, ef.cat) + '</select></label>';
+      html += '<label class="field">Tipo<select class="inp" data-act="expField" data-k="tipo" style="text-transform:capitalize">' + this.optionsHtml(s.taxo.tipos, ef.tipo, true) + '</select></label>';
+      html += '<label class="field">Pessoa<select class="inp" data-act="expField" data-k="pessoa">' + this.optionsHtml(PESSOAS, ef.pessoa) + '</select></label>';
+      html += '<label class="field">Parcela atual<input type="number" min="1" class="inp" value="'+esc(ef.pAtual)+'" data-act="expField" data-k="pAtual" placeholder="Ex.: 3"></label>';
+      html += '<label class="field">Total de parcelas<input type="number" min="1" class="inp" value="'+esc(ef.pTotal)+'" data-act="expField" data-k="pTotal" placeholder="vazio = à vista"></label>';
+      html += '</div>';
+      if(s.formErr) html += '<div class="form-err">'+esc(s.formErr)+'</div>';
+      html += '<div class="row"><button class="btn btn-primary" data-act="saveExp">Salvar despesa</button><button class="btn btn-secondary" data-act="cancelExp">Cancelar</button></div>';
+      html += '</div>';
+    }
+
+    var filtered = s.expenses.filter(function(x){
+      return (!f.mes || x.fatura===f.mes) &&
+        (!f.cardId || (f.cardId==='none' ? !x.cardId : x.cardId===f.cardId)) &&
+        (!f.cat || x.cat===f.cat) && (!f.tipo || x.tipo===f.tipo) &&
+        (!f.pessoa || x.pessoa===f.pessoa) &&
+        (!f.busca || x.desc.toLowerCase().indexOf(f.busca.toLowerCase())!==-1);
+    }).sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
+
+    var cardName = function(id){ var c = s.cards.find(function(x){ return x.id===id; }); return c ? c.nome : 'Sem cartão'; };
+    var rowsHtml = filtered.map(function(x){
+      var dateLabel = x.data ? x.data.slice(8,10)+'/'+x.data.slice(5,7) : '—';
+      var parcLabel = x.pTotal ? x.pAtual + '/' + x.pTotal : '';
+      var delLabel = s.confirmDel === 'e'+x.id ? 'Confirmar?' : 'Excluir';
+      return '<div class="list-row">' +
+        '<div class="row-date">'+esc(dateLabel)+'</div>' +
+        '<div class="row-main"><div class="row-desc">'+esc(x.desc)+'</div><div class="row-sub">'+esc(cardName(x.cardId))+' · '+esc(x.pessoa)+(parcLabel?' · <span class="row-parc">parcela '+esc(parcLabel)+'</span>':'')+'</div></div>' +
+        '<span class="pill '+esc(tipoClass(x.tipo))+'">'+esc(x.tipo)+'</span>' +
+        '<select class="inp-sm" data-act="quickCat" data-id="'+esc(x.id)+'">' + self.optionsHtml(s.taxo.cats, x.cat) + '</select>' +
+        '<div class="row-val">'+self.fmt(x.valor)+'</div>' +
+        '<div class="row-actions"><button class="btn-tiny" data-act="editExp" data-id="'+esc(x.id)+'">Editar</button><button class="btn-tiny danger" data-act="delExp" data-id="'+esc(x.id)+'">'+esc(delLabel)+'</button></div>' +
+        '</div>';
+    }).join('') || '<div class="empty-row">Nenhum lançamento neste filtro.</div>';
+
+    var total = filtered.reduce(function(t,x){ return t+x.valor; },0);
+    html += '<div class="list-wrap"><div class="list-head"><span><strong>'+filtered.length+'</strong> lançamento(s)</span><span>Total: <strong>'+this.fmt(total)+'</strong></span></div>' + rowsHtml + '</div>';
+    html += '</div>';
+    return html;
+  },
+
+  /* ---- Receitas ---- */
+  renderRec: function(){
+    var s = this.state, self = this, f = s.filters;
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<div class="row"><h1 style="flex:1">Receitas</h1><button class="btn btn-green" data-act="openIncForm">+ Nova receita</button></div>';
+
+    html += '<div class="card" style="flex-direction:row;flex-wrap:wrap;gap:14px">';
+    html += '<label class="field-filter">Mês<input type="month" class="inp-sm" value="'+esc(f.mes)+'" data-act="filtField" data-k="mes"></label>';
+    html += '<label class="field-filter">Tipo<select class="inp-sm" data-act="filtField" data-k="recTipo" style="text-transform:capitalize"><option value="">Todos</option>' + this.optionsHtml(s.taxo.tipos, f.recTipo, true) + '</select></label>';
+    html += '<label class="field-filter">Pessoa<select class="inp-sm" data-act="filtField" data-k="recPessoa"><option value="">Todas</option>' + this.optionsHtml(PESSOAS, f.recPessoa) + '</select></label>';
+    html += '</div>';
+
+    if(s.incForm){
+      var inf = s.incForm;
+      html += '<div class="card" style="box-shadow:var(--shadow-md)"><h2 class="card-title green">' + (inf.id?'Editar receita':'Nova receita') + '</h2>';
+      html += '<div class="grid-form">';
+      html += '<label class="field full">Descrição<input class="inp" value="'+esc(inf.desc)+'" data-act="incField" data-k="desc" list="dl-receitas">' +
+        '<datalist id="dl-receitas">' + s.presets.receitas.map(function(p){ return '<option value="'+esc(p.n)+'">'; }).join('') + '</datalist></label>';
+      html += '<label class="field">Valor<input type="number" step="0.01" class="inp" value="'+esc(inf.valor)+'" data-act="incField" data-k="valor" placeholder="0,00"></label>';
+      html += '<label class="field">Data de recebimento<input type="date" class="inp" value="'+esc(inf.data)+'" data-act="incField" data-k="data"></label>';
+      html += '<label class="field">Mês de competência<input type="month" class="inp" value="'+esc(inf.mes)+'" data-act="incField" data-k="mes"></label>';
+      html += '<label class="field">Categoria<select class="inp" data-act="incField" data-k="cat">' + this.optionsHtml(s.taxo.recCats, inf.cat) + '</select></label>';
+      html += '<label class="field">Tipo<select class="inp" data-act="incField" data-k="tipo" style="text-transform:capitalize">' + this.optionsHtml(s.taxo.tipos, inf.tipo, true) + '</select></label>';
+      html += '<label class="field">Pessoa<select class="inp" data-act="incField" data-k="pessoa">' + this.optionsHtml(PESSOAS, inf.pessoa) + '</select></label>';
+      html += '</div>';
+      if(s.formErr) html += '<div class="form-err">'+esc(s.formErr)+'</div>';
+      html += '<div class="row"><button class="btn btn-green" data-act="saveInc">Salvar receita</button><button class="btn btn-secondary" data-act="cancelInc">Cancelar</button></div>';
+      html += '</div>';
+    }
+
+    var filtered = s.incomes.filter(function(x){
+      return (!f.mes || x.mes===f.mes) && (!f.recTipo || x.tipo===f.recTipo) && (!f.recPessoa || x.pessoa===f.recPessoa);
+    }).sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
+
+    var rowsHtml = filtered.map(function(x){
+      var dateLabel = x.data ? x.data.slice(8,10)+'/'+x.data.slice(5,7) : '—';
+      var delLabel = s.confirmDel === 'i'+x.id ? 'Confirmar?' : 'Excluir';
+      return '<div class="list-row">' +
+        '<div class="row-date">'+esc(dateLabel)+'</div>' +
+        '<div class="row-main"><div class="row-desc">'+esc(x.desc)+'</div><div class="row-sub">'+esc(x.cat)+' · '+esc(x.pessoa)+'</div></div>' +
+        '<span class="pill '+esc(tipoClass(x.tipo))+'">'+esc(x.tipo)+'</span>' +
+        '<div class="row-val" style="color:var(--success)">'+self.fmt(x.valor)+'</div>' +
+        '<div class="row-actions"><button class="btn-tiny" data-act="editInc" data-id="'+esc(x.id)+'">Editar</button><button class="btn-tiny danger" data-act="delInc" data-id="'+esc(x.id)+'">'+esc(delLabel)+'</button></div>' +
+        '</div>';
+    }).join('') || '<div class="empty-row">Nenhum lançamento neste filtro.</div>';
+
+    var total = filtered.reduce(function(t,x){ return t+x.valor; },0);
+    html += '<div class="list-wrap"><div class="list-head"><span><strong>'+filtered.length+'</strong> lançamento(s)</span><span>Total: <strong style="color:var(--success)">'+this.fmt(total)+'</strong></span></div>' + rowsHtml + '</div>';
+    html += '</div>';
+    return html;
+  },
+
+  /* ---- Importar fatura ---- */
+  renderImp: function(){
+    var s = this.state, self = this, imp = s.imp;
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<h1>Importar fatura</h1>';
+    html += '<div class="card">';
+    html += '<div class="grid-form">';
+    html += '<label class="field">Cartão<select class="inp" data-act="impField" data-k="cardId"><option value="">Selecione…</option>' +
+      s.cards.map(function(c){ return '<option value="'+esc(c.id)+'"'+(imp.cardId===c.id?' selected':'')+'>'+esc(c.nome)+'</option>'; }).join('') + '</select></label>';
+    html += '<label class="field">Mês da fatura<input type="month" class="inp" value="'+esc(imp.mes)+'" data-act="impField" data-k="mes"></label>';
+    html += '<label class="field">Tipo padrão<select class="inp" data-act="impField" data-k="tipo" style="text-transform:capitalize">' + this.optionsHtml(s.taxo.tipos, imp.tipo, true) + '</select></label>';
+    html += '<label class="field">Pessoa padrão<select class="inp" data-act="impField" data-k="pessoa">' + this.optionsHtml(PESSOAS, imp.pessoa) + '</select></label>';
+    html += '</div>';
+    html += '<label class="field full">Texto da fatura<textarea class="inp" rows="9" data-act="impField" data-k="text" placeholder="Cole aqui o texto da fatura…">'+esc(imp.text)+'</textarea></label>';
+    html += '<div class="row">';
+    html += '<label class="btn btn-secondary" style="position:relative">' + (imp.pdfBusy?'Lendo PDF…':'Enviar PDF da fatura') +
+      '<input type="file" accept="application/pdf" data-act="onPdf" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>';
+    html += '<button class="btn btn-primary" data-act="parseNow" '+(imp.busy?'disabled':'')+'>' + (imp.busy?'<span class="spinner"></span> Interpretando…':'Interpretar com IA') + '</button>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:var(--text3)">A IA identifica lançamentos, parcelas e sugere categorias — revise antes de confirmar.</div>';
+    if(imp.err) html += '<div class="alert err">'+esc(imp.err)+'</div>';
+    html += '</div>';
+
+    if(imp.rows){
+      var rowsHtml = imp.rows.map(function(r,i){
+        var dataLabel = r.data ? r.data.slice(8,10)+'/'+r.data.slice(5,7) : '—';
+        var parcLabel = r.pTotal ? r.pAtual + '/' + r.pTotal : '';
+        return '<div class="list-row">' +
+          '<input type="checkbox" data-act="toggleRow" data-i="'+i+'" '+(r.inc?'checked':'')+' style="accent-color:var(--coral);width:16px;height:16px">' +
+          '<div class="row-date">'+esc(dataLabel)+'</div>' +
+          '<input class="inp-sm" style="flex:2;min-width:140px" value="'+esc(r.desc)+'" data-act="parsedField" data-i="'+i+'" data-k="desc">' +
+          (parcLabel ? '<span class="pill" style="background:var(--coral-dim);color:var(--coral)">'+esc(parcLabel)+'</span>' : '') +
+          '<select class="inp-sm" data-act="parsedField" data-i="'+i+'" data-k="cat">' + self.optionsHtml(s.taxo.cats, r.cat) + '</select>' +
+          '<select class="inp-sm" data-act="parsedField" data-i="'+i+'" data-k="tipo" style="text-transform:capitalize">' + self.optionsHtml(s.taxo.tipos, r.tipo, true) + '</select>' +
+          '<select class="inp-sm" data-act="parsedField" data-i="'+i+'" data-k="pessoa">' + self.optionsHtml(PESSOAS, r.pessoa) + '</select>' +
+          '<div class="row-val">'+self.fmt(Number(r.valor)||0)+'</div>' +
+          '</div>';
+      }).join('');
+      var sel = imp.rows.filter(function(r){ return r.inc; });
+      var totalSel = sel.reduce(function(t,r){ return t + (Number(r.valor)||0); }, 0);
+      html += '<div class="list-wrap"><div class="list-head"><span><strong>'+sel.length+'</strong> selecionado(s)</span><span>Total: <strong>'+this.fmt(totalSel)+'</strong>' +
+        '<button class="btn btn-green" style="margin-left:14px" data-act="confirmImport">Adicionar às despesas</button>' +
+        '<button class="btn btn-secondary" style="margin-left:8px" data-act="clearImport">Descartar</button></span></div>' + rowsHtml + '</div>';
+    }
+    html += '</div>';
+    return html;
+  },
+
+  /* ---- Projeção ---- */
+  renderProj: function(){
+    var s = this.state, self = this;
+    var mes = s.filters.mes;
+    var nProj = Math.max(1, Math.min(24, Number(s.prefs.mesesProjecao)||6));
+    var projMonths = []; for(var k=1;k<=nProj;k++) projMonths.push(addMonths(mes,k));
+    var projVals = projMonths.map(function(m){ return self.committedIn(m); });
+    var pMax = Math.max(1, Math.max.apply(null, projVals));
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<h1>Projeção</h1>';
+    html += '<div class="card"><h2 class="card-title">Valores já comprometidos</h2><div style="display:flex;flex-direction:column;gap:12px">';
+    projMonths.forEach(function(m,i){
+      var pct = Math.round(projVals[i]/pMax*100);
+      html += '<div class="proj-row"><div class="proj-label">'+esc(mesLabel(m))+'</div><div class="proj-track"><div class="proj-fill" style="width:'+pct+'%"></div></div><div class="proj-val">'+self.fmt(projVals[i])+'</div></div>';
+    });
+    html += '</div><div style="font-size:11px;color:var(--text3)">Inclui parcelas futuras estimadas das compras parceladas ativas e despesas já lançadas em faturas futuras.</div></div>';
+
+    var chains = this.chainsCalc();
+    var cardName = function(id){ var c = s.cards.find(function(x){ return x.id===id; }); return c ? c.nome : 'Sem cartão'; };
+    var chainsHtml = chains.map(function(c){
+      var pctDone = Math.round(c.pAtual/c.pTotal*100);
+      var rest = (c.pTotal - c.pAtual) * c.valor;
+      return '<div class="chain-row"><div class="chain-main"><div class="chain-desc">'+esc(c.desc)+'</div><div class="chain-sub">'+esc(cardName(c.cardId))+' · Parcela '+c.pAtual+' de '+c.pTotal+'</div>' +
+        '<div class="chain-track"><div class="chain-fill" style="width:'+pctDone+'%"></div></div></div>' +
+        '<div class="chain-permo">'+self.fmt(c.valor)+'/mês</div>' +
+        '<div class="chain-rest">'+self.fmt(rest)+' restante</div></div>';
+    }).join('') || '<div class="empty-row">Nenhuma compra parcelada em andamento.</div>';
+    html += '<div class="card"><h2 class="card-title">Compras parceladas ativas</h2>' + chainsHtml + '</div>';
+    html += '</div>';
+    return html;
+  },
+
+  /* ---- Cadastros ---- */
+  renderCad: function(){
+    var s = this.state, self = this;
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<div><h1>Cadastros</h1><div style="font-size:13px;color:var(--text2);margin-top:6px">Cadastre seus cartões de crédito e os nomes padrão de despesas e receitas — eles aparecem como sugestão ao lançar.</div></div>';
+
+    html += '<div class="row"><h2 class="card-title" style="flex:1">Cartões de crédito</h2><button class="btn btn-primary" data-act="openCardForm">+ Novo cartão</button></div>';
+    if(s.cardForm){
+      var cf = s.cardForm;
+      html += '<div class="card" style="box-shadow:var(--shadow-md)"><h2 class="card-title">'+(cf.id?'Editar cartão':'Novo cartão')+'</h2><div class="grid-form">';
+      html += '<label class="field">Nome do cartão<input class="inp" value="'+esc(cf.nome)+'" data-act="cardField" data-k="nome"></label>';
+      html += '<label class="field">Banco<input class="inp" value="'+esc(cf.banco)+'" data-act="cardField" data-k="banco"></label>';
+      html += '<label class="field">Limite (R$)<input type="number" step="0.01" class="inp" value="'+esc(cf.limite)+'" data-act="cardField" data-k="limite"></label>';
+      html += '<label class="field">Melhor dia de compra<input type="number" min="1" max="31" class="inp" value="'+esc(cf.melhorDia)+'" data-act="cardField" data-k="melhorDia"></label>';
+      html += '<label class="field">Vencimento (dia)<input type="number" min="1" max="31" class="inp" value="'+esc(cf.venc)+'" data-act="cardField" data-k="venc"></label>';
+      html += '</div>';
+      if(s.formErr) html += '<div class="form-err">'+esc(s.formErr)+'</div>';
+      html += '<div class="row"><button class="btn btn-primary" data-act="saveCard">Salvar cartão</button><button class="btn btn-secondary" data-act="cancelCard">Cancelar</button></div></div>';
+    }
+    if(s.cards.length){
+      var mes = s.filters.mes;
+      var monthExp = s.expenses.filter(function(x){ return x.fatura===mes; });
+      html += '<div class="grid-cards">' + s.cards.map(function(c){
+        var uso = monthExp.filter(function(x){ return x.cardId===c.id; }).reduce(function(t,x){ return t+x.valor; },0);
+        var pct = c.limite ? Math.min(100, Math.round(uso/c.limite*100)) : 0;
+        var delLabel = s.confirmDel === 'c'+c.id ? 'Confirmar?' : 'Excluir';
+        return '<div class="navy-tile"><div class="tname">'+esc(c.nome)+'</div><div class="tbank">'+esc(c.banco)+'</div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;opacity:.85"><span>Fatura de '+esc(mesLabel(mes))+'</span><span style="font-weight:800">'+self.fmt(uso)+'</span></div>' +
+          '<div class="navy-track"><div class="navy-fill '+(pct>80?'over':'')+'" style="width:'+pct+'%"></div></div>' +
+          '<div class="navy-meta">Limite '+self.fmt(c.limite)+' · '+pct+'% usado</div>' +
+          '<div class="navy-meta">Melhor dia: '+c.melhorDia+' / Vencimento: dia '+c.venc+'</div>' +
+          '<div class="navy-actions"><button class="btn-translucent" data-act="editCard" data-id="'+esc(c.id)+'">Editar</button><button class="btn-translucent" data-act="delCard" data-id="'+esc(c.id)+'">'+esc(delLabel)+'</button></div>' +
+          '</div>';
+      }).join('') + '</div>';
+    } else {
+      html += '<div class="empty-panel"><div class="empty-text">Nenhum cartão cadastrado ainda.</div></div>';
+    }
+
+    html += '<div class="grid-minicards" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">';
+    ['despesas','receitas'].forEach(function(g){
+      var title = g === 'despesas' ? 'Nomes de despesas' : 'Nomes de receitas';
+      var catList = g === 'despesas' ? s.taxo.cats : s.taxo.recCats;
+      var pin = s.pIn[g];
+      html += '<div class="card"><h2 class="card-title">'+title+'</h2>';
+      html += '<label class="field full">Nome<input class="inp" value="'+esc(pin.n)+'" data-act="presetInput" data-g="'+g+'" data-k="n"></label>';
+      html += '<div class="row">';
+      html += '<select class="inp-sm" data-act="presetInput" data-g="'+g+'" data-k="cat">' + self.optionsHtml(catList, pin.cat) + '</select>';
+      html += '<select class="inp-sm" data-act="presetInput" data-g="'+g+'" data-k="tipo" style="text-transform:capitalize">' + self.optionsHtml(s.taxo.tipos, pin.tipo, true) + '</select>';
+      html += '<button class="btn-tiny" data-act="addPreset" data-g="'+g+'">Adicionar</button>';
+      html += '</div>';
+      var items = (s.presets[g]||[]);
+      html += '<div class="chip-wrap">' + (items.length ? items.map(function(p){
+        return '<span class="chip">'+esc(p.n)+' · '+esc(p.cat)+' · '+esc(p.tipo)+'<button data-act="delPreset" data-g="'+g+'" data-n="'+esc(p.n)+'">×</button></span>';
+      }).join('') : '<span style="font-size:12px;color:var(--text3)">Nenhum nome cadastrado.</span>') + '</div></div>';
+    });
+    html += '</div>';
+
+    html += '<div class="grid-minicards" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">';
+    var taxoDefs = [['cats','Categorias de despesas','coral'],['recCats','Categorias de receitas','green'],['tipos','Tipos de lançamento','indigo']];
+    taxoDefs.forEach(function(d){
+      var g = d[0];
+      html += '<div class="card"><h2 class="card-title" style="color:var(--'+(d[2]==='coral'?'coral':d[2]==='green'?'success':'indigo')+')">'+d[1]+'</h2>';
+      html += '<div class="row"><input class="inp" style="flex:1" value="'+esc(s.tIn[g])+'" data-act="taxoInput" data-g="'+g+'"><button class="btn-tiny" data-act="addTaxo" data-g="'+g+'">Adicionar</button></div>';
+      html += '<div class="chip-wrap">' + (s.taxo[g]||[]).map(function(n){
+        return '<span class="chip" style="'+(g==='tipos'?'text-transform:capitalize':'')+'">'+esc(n)+'<button data-act="delTaxo" data-g="'+g+'" data-n="'+esc(n)+'">×</button></span>';
+      }).join('') + '</div>';
+      if(g==='tipos') html += '<div style="font-size:11px;color:var(--text3)">Usados em despesas e receitas.</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    html += '</div>';
+    return html;
+  },
+
+  /* ---- Nuvem ---- */
+  renderSync: function(){
+    var s = this.state, c = s.cfg, sync = s.sync;
+    var html = '<div style="display:flex;flex-direction:column;gap:20px">';
+    html += '<h1>Nuvem</h1>';
+
+    html += '<div class="card"><h2 class="card-title">Configuração GitHub</h2>';
+    html += '<div style="font-size:12px;color:var(--text2);line-height:1.6">Crie um token fine-grained em <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> com permissão <strong>Contents: Read and write</strong> em um repositório privado.</div>';
+    html += '<div class="grid-form">';
+    html += '<label class="field">Usuário/organização<input class="inp" value="'+esc(c.owner)+'" data-act="cfgField" data-k="owner"></label>';
+    html += '<label class="field">Repositório<input class="inp" value="'+esc(c.repo)+'" data-act="cfgField" data-k="repo"></label>';
+    html += '<label class="field">Branch<input class="inp" value="'+esc(c.branch)+'" data-act="cfgField" data-k="branch" placeholder="main"></label>';
+    html += '<label class="field">Arquivo<input class="inp" value="'+esc(c.path)+'" data-act="cfgField" data-k="path" placeholder="financas-dados.json"></label>';
+    html += '<label class="field full">Token<input type="password" class="inp" value="'+esc(c.token)+'" data-act="cfgField" data-k="token"></label>';
+    html += '</div>';
+    html += '<label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--text2)"><input type="checkbox" data-act="cfgField" data-k="auto" '+(c.auto?'checked':'')+' style="accent-color:var(--coral);width:16px;height:16px"> Sincronizar automaticamente (carrega ao abrir e salva após cada alteração)</label>';
+    html += '<div class="row"><button class="btn btn-primary" data-act="pullCloud">Carregar da nuvem</button><button class="btn btn-secondary" data-act="pushCloud">Salvar na nuvem agora</button></div>';
+    if(sync.msg){
+      var kind = sync.msgKind === 'err' ? 'err' : sync.msgKind === 'ok' ? 'ok' : 'info';
+      html += '<div class="alert '+kind+'">'+esc(sync.msg)+'</div>';
+    }
+    html += '<div style="font-size:11px;color:var(--text3)">O token fica só no navegador; há cópia local automática.</div>';
+    html += '</div>';
+
+    html += '<div class="card"><h2 class="card-title">Interpretação por IA (fatura)</h2>';
+    html += '<div style="font-size:12px;color:var(--text2);line-height:1.6">Chamar a API da Anthropic direto do navegador expõe sua chave. Configure aqui a URL de um pequeno proxy (função serverless) que recebe o mesmo corpo do endpoint <code>/v1/messages</code> e injeta a chave no servidor — por exemplo, um endpoint novo no seu proxy Railway já existente.</div>';
+    html += '<div class="grid-form">';
+    html += '<label class="field full">Endpoint do proxy de IA<input class="inp" value="'+esc(c.aiProxyUrl)+'" data-act="cfgField" data-k="aiProxyUrl" placeholder="https://seu-proxy.up.railway.app/api/interpretar-fatura"></label>';
+    html += '<label class="field full">Chave do proxy (x-proxy-key)<input type="password" class="inp" value="'+esc(c.aiProxyKey)+'" data-act="cfgField" data-k="aiProxyKey" placeholder="mesma string do PROXY_SHARED_SECRET no Railway"></label>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div class="card"><h2 class="card-title">Cópia de segurança em arquivo</h2>';
+    html += '<div class="row"><button class="btn btn-secondary" data-act="exportJson">Baixar dados (.json)</button>' +
+      '<label class="btn btn-secondary" style="position:relative">Restaurar de um arquivo…<input type="file" accept="application/json" data-act="onImportFile" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label></div>';
+    html += '</div>';
+
+    html += '<div class="card"><h2 class="card-title">Preferências</h2><div class="grid-form">';
+    html += '<label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--text2)"><input type="checkbox" data-act="prefField" data-k="ocultarValores" '+(s.prefs.ocultarValores?'checked':'')+' style="accent-color:var(--coral);width:16px;height:16px"> Ocultar valores (privacidade)</label>';
+    html += '<label class="field">Meses de projeção<input type="number" min="3" max="24" class="inp" value="'+s.prefs.mesesProjecao+'" data-act="prefField" data-k="mesesProjecao"></label>';
+    html += '<label class="field">Modelo de IA<select class="inp" data-act="prefField" data-k="modeloIA"><option value="claude-haiku-4-5"'+(s.prefs.modeloIA==='claude-haiku-4-5'?' selected':'')+'>Haiku (rápido)</option><option value="claude-sonnet-4-6"'+(s.prefs.modeloIA==='claude-sonnet-4-6'?' selected':'')+'>Sonnet (mais preciso)</option></select></label>';
+    html += '</div></div>';
+
+    html += '</div>';
+    return html;
+  },
+
+  /* ==================== Eventos ==================== */
+  bindEvents: function(){
+    var self = this;
+    var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat'];
+    var CLICK_ACTIONS = ['goTab','openCardForm','editCard','saveCard','cancelCard','delCard','openExpForm','editExp','saveExp','cancelExp','delExp',
+      'openIncForm','editInc','saveInc','cancelInc','delInc','addPreset','delPreset','addTaxo','delTaxo','parseNow','clearImport','confirmImport',
+      'pullCloud','pushCloud','exportJson'];
+    var FILE_ACTIONS = ['onPdf','onImportFile'];
+    var CHECK_ACTIONS = ['toggleRow'];
+
+    this.root.addEventListener('click', function(e){
+      var el = e.target.closest('[data-act]');
+      if(!el) return;
+      var act = el.dataset.act;
+      if(CLICK_ACTIONS.indexOf(act) === -1) return;
+      if(el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') return;
+      if(typeof self[act] === 'function') self[act](el);
+    });
+
+    this.root.addEventListener('change', function(e){
+      var el = e.target.closest('[data-act]');
+      if(!el) return;
+      var act = el.dataset.act;
+      if(FILE_ACTIONS.indexOf(act) !== -1){ self[act](el, e); return; }
+      if(CHECK_ACTIONS.indexOf(act) !== -1){ self[act](el); return; }
+      if(CHANGE_ACTIONS.indexOf(act) !== -1){ self[act](el); return; }
+    });
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function(){ App.init(); });
+})();
+</script>
+</body>
+</html>
