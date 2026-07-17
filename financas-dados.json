@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290537423,
+  "updatedAt": 1784290545474,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -55,6 +55,11 @@
       },
       {
         "n": "Afiliados - Mercado Livre",
+        "cat": "Serviços prestados",
+        "tipo": "empresarial"
+      },
+      {
+        "n": "Afiliados - Shopee",
         "cat": "Serviços prestados",
         "tipo": "empresarial"
       }
