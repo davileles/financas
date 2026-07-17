@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1784290504010,
+  "updatedAt": 1784290523923,
   "cards": [],
   "expenses": [],
   "incomes": [],
@@ -47,7 +47,13 @@
         "tipo": "empresarial"
       }
     ],
-    "receitas": []
+    "receitas": [
+      {
+        "n": "Afiliados - Amazon",
+        "cat": "Serviços prestados",
+        "tipo": "empresarial"
+      }
+    ]
   },
   "taxo": {
     "cats": [
