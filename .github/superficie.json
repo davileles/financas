@@ -1,0 +1,29 @@
+{
+  "limiarRemocao": 150,
+  "arquivos": {
+    "index.html": {
+      "minLinhas": 1207,
+      "obrigatorio": [
+        "function addMonths(",
+        "function currentMes(",
+        "function diffMonths(",
+        "function esc(",
+        "function mesLabel(",
+        "function mesShort(",
+        "function norm(",
+        "function readPage(",
+        "function tipoClass(",
+        "function todayIso(",
+        "function uid("
+      ]
+    },
+    "proxy/index.js": {
+      "minLinhas": 77,
+      "obrigatorio": [
+        "app.get('/'",
+        "app.get('/health'",
+        "app.post('/api/interpretar-fatura'"
+      ]
+    }
+  }
+}
