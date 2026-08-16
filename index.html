@@ -239,9 +239,10 @@ var App = {
       tab: 'dash',
       cards: [], expenses: [], incomes: [],
       presets: { despesas: [], receitas: [] },
-      pIn: { despesas: { n:'', cat:'Outros', tipo:'familiar', pessoa:'', cardId:'' }, receitas: { n:'', cat:'Salário', tipo:'familiar', pessoa:'' } },
+      pIn: { despesas: { n:'', cat:'Outros', tipo:'familiar', pessoa:'', cardId:'', orig:'' }, receitas: { n:'', cat:'Salário', tipo:'familiar', pessoa:'', orig:'' } },
       taxo: { cats: CATS.slice(), recCats: RCATS.slice(), tipos: TIPOS.slice() },
       tIn: { cats:'', recCats:'', tipos:'' },
+      tOrig: { cats:'', recCats:'', tipos:'' },
       merchantRules: DEFAULT_MERCHANT_RULES.map(function(r){ return Object.assign({}, r); }),
       mrIn: { pattern:'', tipo:'empresarial', pessoa:'Davi' },
       updatedAt: 0,
@@ -556,12 +557,30 @@ var App = {
   addPreset: function(el){
     var g = el.dataset.g, f = this.state.pIn[g], n = (f.n||'').trim();
     if(!n) return;
-    var cur = (this.state.presets[g]||[]).filter(function(x){ return x.n.toLowerCase() !== n.toLowerCase(); });
+    var orig = (f.orig||'').toLowerCase();
+    var cur = (this.state.presets[g]||[]).filter(function(x){
+      var xl = x.n.toLowerCase();
+      return xl !== n.toLowerCase() && (!orig || xl !== orig);
+    });
     cur.push({ n:n, cat:f.cat, tipo:f.tipo, pessoa:f.pessoa||'', cardId: g==='despesas' ? (f.cardId||'') : '' });
     cur.sort(function(a,b){ return a.n.localeCompare(b.n,'pt-BR'); });
     this.state.presets[g] = cur;
-    this.state.pIn[g].n = '';
+    this.state.pIn[g].n = ''; this.state.pIn[g].orig = '';
     this.persist(); this.render();
+  },
+  editPreset: function(el){
+    var g = el.dataset.g, n = el.dataset.n;
+    var p = (this.state.presets[g]||[]).find(function(x){ return x.n === n; });
+    if(!p) return;
+    this.state.pIn[g] = { n:p.n, cat:p.cat, tipo:p.tipo, pessoa:p.pessoa||'', cardId:p.cardId||'', orig:p.n };
+    this.render();
+  },
+  cancelPresetEdit: function(el){
+    var g = el.dataset.g;
+    this.state.pIn[g] = g==='despesas'
+      ? { n:'', cat:'Outros', tipo:'familiar', pessoa:'', cardId:'', orig:'' }
+      : { n:'', cat:'Salário', tipo:'familiar', pessoa:'', orig:'' };
+    this.render();
   },
   delPreset: function(el){
     var g = el.dataset.g, n = el.dataset.n;
@@ -576,10 +595,45 @@ var App = {
     if(!v) return;
     if(g === 'tipos') v = v.toLowerCase();
     var cur = this.state.taxo[g] || [];
-    if(cur.some(function(x){ return x.toLowerCase() === v.toLowerCase(); })){ this.state.tIn[g]=''; this.render(); return; }
+    var orig = this.state.tOrig[g] || '';
+    if(orig && orig !== v){
+      // Rename: mantém a posição na lista e propaga para todos os dados que usam o nome antigo
+      if(cur.some(function(x){ return x.toLowerCase() === v.toLowerCase() && x !== orig; })){
+        this.state.formErr=''; this.state.tIn[g]=''; this.state.tOrig[g]=''; this.render(); return;
+      }
+      this.state.taxo[g] = cur.map(function(x){ return x === orig ? v : x; });
+      var ren = function(val){ return val === orig ? v : val; };
+      if(g === 'cats'){
+        this.state.expenses = this.state.expenses.map(function(x){ return x.cat === orig ? Object.assign({}, x, {cat:v}) : x; });
+        this.state.presets.despesas = (this.state.presets.despesas||[]).map(function(p){ return p.cat === orig ? Object.assign({}, p, {cat:v}) : p; });
+      } else if(g === 'recCats'){
+        this.state.incomes = this.state.incomes.map(function(x){ return x.cat === orig ? Object.assign({}, x, {cat:v}) : x; });
+        this.state.presets.receitas = (this.state.presets.receitas||[]).map(function(p){ return p.cat === orig ? Object.assign({}, p, {cat:v}) : p; });
+      } else if(g === 'tipos'){
+        this.state.expenses = this.state.expenses.map(function(x){ return x.tipo === orig ? Object.assign({}, x, {tipo:v}) : x; });
+        this.state.incomes = this.state.incomes.map(function(x){ return x.tipo === orig ? Object.assign({}, x, {tipo:v}) : x; });
+        this.state.presets.despesas = (this.state.presets.despesas||[]).map(function(p){ return p.tipo === orig ? Object.assign({}, p, {tipo:v}) : p; });
+        this.state.presets.receitas = (this.state.presets.receitas||[]).map(function(p){ return p.tipo === orig ? Object.assign({}, p, {tipo:v}) : p; });
+        this.state.merchantRules = (this.state.merchantRules||[]).map(function(r){ return r.tipo === orig ? Object.assign({}, r, {tipo:v}) : r; });
+      }
+      this.state.tIn[g]=''; this.state.tOrig[g]='';
+      this.persist(); this.render(); return;
+    }
+    if(cur.some(function(x){ return x.toLowerCase() === v.toLowerCase(); })){ this.state.tIn[g]=''; this.state.tOrig[g]=''; this.render(); return; }
     this.state.taxo[g] = cur.concat([v]);
-    this.state.tIn[g] = '';
+    this.state.tIn[g] = ''; this.state.tOrig[g]='';
     this.persist(); this.render();
+  },
+  editTaxo: function(el){
+    var g = el.dataset.g, n = el.dataset.n;
+    this.state.tIn[g] = n;
+    this.state.tOrig[g] = n;
+    this.render();
+  },
+  cancelTaxoEdit: function(el){
+    var g = el.dataset.g;
+    this.state.tIn[g]=''; this.state.tOrig[g]='';
+    this.render();
   },
   delTaxo: function(el){
     var g = el.dataset.g, n = el.dataset.n;
@@ -1249,14 +1303,15 @@ var App = {
       if(g === 'despesas'){
         html += '<select class="inp-sm" data-act="presetInput" data-g="despesas" data-k="cardId"><option value=""'+(pin.cardId?'':' selected')+'>Pagamento (opcional)</option>' + self.cardOptionsHtml(pin.cardId) + '</select>';
       }
-      html += '<button class="btn-tiny" data-act="addPreset" data-g="'+g+'">Adicionar</button>';
+      html += '<button class="btn-tiny" data-act="addPreset" data-g="'+g+'">'+(pin.orig?'Salvar':'Adicionar')+'</button>';
+      if(pin.orig) html += '<button class="btn-tiny" data-act="cancelPresetEdit" data-g="'+g+'">Cancelar</button>';
       html += '</div>';
       var items = (s.presets[g]||[]);
       html += '<div class="chip-wrap">' + (items.length ? items.map(function(p){
         var extras = '';
         if(p.pessoa) extras += ' · '+esc(p.pessoa);
         if(p.cardId){ var pc = s.cards.find(function(c){ return c.id===p.cardId; }); extras += ' · '+esc(p.cardId==='none' ? 'Débito/Dinheiro' : (pc ? pc.nome : 'Cartão removido')); }
-        return '<span class="chip">'+esc(p.n)+' · '+esc(p.cat)+' · '+esc(p.tipo)+extras+'<button data-act="delPreset" data-g="'+g+'" data-n="'+esc(p.n)+'">×</button></span>';
+        return '<span class="chip">'+esc(p.n)+' · '+esc(p.cat)+' · '+esc(p.tipo)+extras+'<button data-act="editPreset" data-g="'+g+'" data-n="'+esc(p.n)+'" title="Editar">✎</button><button data-act="delPreset" data-g="'+g+'" data-n="'+esc(p.n)+'">×</button></span>';
       }).join('') : '<span style="font-size:12px;color:var(--text3)">Nenhum nome cadastrado.</span>') + '</div></div>';
     });
     html += '</div>';
@@ -1266,9 +1321,10 @@ var App = {
     taxoDefs.forEach(function(d){
       var g = d[0];
       html += '<div class="card"><h2 class="card-title" style="color:var(--'+(d[2]==='coral'?'coral':d[2]==='green'?'success':'indigo')+')">'+d[1]+'</h2>';
-      html += '<div class="row"><input class="inp" style="flex:1" value="'+esc(s.tIn[g])+'" data-act="taxoInput" data-g="'+g+'"><button class="btn-tiny" data-act="addTaxo" data-g="'+g+'">Adicionar</button></div>';
+      html += '<div class="row"><input class="inp" style="flex:1" value="'+esc(s.tIn[g])+'" data-act="taxoInput" data-g="'+g+'"><button class="btn-tiny" data-act="addTaxo" data-g="'+g+'">'+(s.tOrig[g]?'Salvar':'Adicionar')+'</button>'+(s.tOrig[g]?'<button class="btn-tiny" data-act="cancelTaxoEdit" data-g="'+g+'">Cancelar</button>':'')+'</div>';
+      if(s.tOrig[g]) html += '<div style="font-size:11px;color:var(--text3);margin-top:-6px">Renomeando "'+esc(s.tOrig[g])+'" — a alteração será aplicada em todos os lançamentos que usam esse nome.</div>';
       html += '<div class="chip-wrap">' + (s.taxo[g]||[]).map(function(n){
-        return '<span class="chip" style="'+(g==='tipos'?'text-transform:capitalize':'')+'">'+esc(n)+'<button data-act="delTaxo" data-g="'+g+'" data-n="'+esc(n)+'">×</button></span>';
+        return '<span class="chip" style="'+(g==='tipos'?'text-transform:capitalize':'')+'">'+esc(n)+'<button data-act="editTaxo" data-g="'+g+'" data-n="'+esc(n)+'" title="Editar">✎</button><button data-act="delTaxo" data-g="'+g+'" data-n="'+esc(n)+'">×</button></span>';
       }).join('') + '</div>';
       if(g==='tipos') html += '<div style="font-size:11px;color:var(--text3)">Usados em despesas e receitas.</div>';
       html += '</div>';
@@ -1344,7 +1400,7 @@ var App = {
     var self = this;
     var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat','quickTipo','mrField'];
     var CLICK_ACTIONS = ['goTab','openCardForm','editCard','saveCard','cancelCard','delCard','openExpForm','editExp','saveExp','cancelExp','delExp',
-      'openIncForm','editInc','saveInc','cancelInc','delInc','addPreset','delPreset','addTaxo','delTaxo','parseNow','clearImport','confirmImport',
+      'openIncForm','editInc','saveInc','cancelInc','delInc','addPreset','delPreset','editPreset','cancelPresetEdit','addTaxo','delTaxo','editTaxo','cancelTaxoEdit','parseNow','clearImport','confirmImport',
       'pullCloud','pushCloud','exportJson','addMerchantRule','delMerchantRule'];
     var FILE_ACTIONS = ['onPdf','onImportFile'];
     var CHECK_ACTIONS = ['toggleRow'];
