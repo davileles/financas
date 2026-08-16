@@ -612,9 +612,22 @@ var App = {
     }).then(function(pdfjs){
       pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
       return f.arrayBuffer().then(function(buf){
-        var opts = { data: buf };
-        if(pwd) opts.password = pwd;
-        return pdfjs.getDocument(opts).promise;
+        var task = pdfjs.getDocument({ data: buf });
+        var attempts = [];
+        if(pwd){
+          attempts.push(pwd);
+          var soDigitos = pwd.replace(/\D/g,'');
+          if(soDigitos && soDigitos !== pwd) attempts.push(soDigitos);
+        }
+        var ai = 0;
+        self._pdfPwdReason = null;
+        task.onPassword = function(update, reason){
+          // reason 1 = PDF exige senha; reason 2 = senha fornecida foi recusada
+          if(ai < attempts.length){ update(attempts[ai++]); return; }
+          self._pdfPwdReason = reason;
+          task.destroy();
+        };
+        return task.promise;
       });
     }).then(function(doc){
       var pagesText = [];
@@ -639,10 +652,15 @@ var App = {
       self.render();
     }).catch(function(err){
       self.state.imp.pdfBusy = false;
-      if(err && err.name === 'PasswordException'){
-        self.state.imp.err = pwd
-          ? 'Senha incorreta para este PDF. Confira a senha no campo acima e envie o arquivo novamente.'
-          : 'Este PDF está protegido por senha. Informe a senha no campo "Senha do PDF" acima e envie o arquivo novamente.';
+      console.error('[PDF]', err, 'pwdReason:', self._pdfPwdReason);
+      var reason = self._pdfPwdReason;
+      if(reason || (err && err.name === 'PasswordException')){
+        if(!pwd || reason === 1){
+          self.state.imp.err = 'Este PDF está protegido por senha. Informe a senha no campo "Senha do PDF" acima e envie o arquivo novamente.';
+        } else {
+          self.state.imp.err = 'O leitor de PDF recusou a senha informada ('+pwd.length+' caractere(s), testei também só os dígitos). ' +
+            'Teste abrir este mesmo arquivo no Chrome com essa senha: se abrir lá e falhar aqui, é limitação do leitor — nesse caso, abra o PDF, copie o texto (Ctrl+A, Ctrl+C) e cole na caixa acima.';
+        }
       } else {
         self.state.imp.err = 'Não consegui ler este PDF (' + err.message + '). Se ele for digitalizado como imagem, copie o texto da fatura e cole na caixa acima.';
       }
