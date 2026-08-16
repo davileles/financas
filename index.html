@@ -1124,7 +1124,7 @@ var App = {
     html += '<label class="field">Pessoa padrão<select class="inp" data-act="impField" data-k="pessoa">' + this.optionsHtml(PESSOAS, imp.pessoa) + '</select></label>';
     html += '</div>';
     html += '<label class="field full">Texto da fatura<textarea class="inp" rows="9" data-act="impField" data-k="text" placeholder="Cole aqui o texto da fatura…">'+esc(imp.text)+'</textarea></label>';
-    html += '<label class="field" style="max-width:260px">Senha do PDF (se houver)<input type="password" class="inp" value="'+esc(imp.pdfPassword)+'" data-act="impField" data-k="pdfPassword" placeholder="Deixe em branco se não houver"></label>';
+    html += '<label class="field" style="max-width:260px">Senha do PDF (se houver)<input type="text" class="inp" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="pdf-doc-pwd" value="'+esc(imp.pdfPassword)+'" data-act="impField" data-k="pdfPassword" placeholder="Deixe em branco se não houver"></label>';
     html += '<div class="row">';
     html += '<label class="btn btn-secondary" style="position:relative">' + (imp.pdfBusy?'Lendo PDF…':'Enviar PDF da fatura') +
       '<input type="file" accept="application/pdf" data-act="onPdf" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>';
