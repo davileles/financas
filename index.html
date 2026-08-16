@@ -502,6 +502,11 @@ var App = {
     this.state.expenses = this.state.expenses.map(function(x){ return x.id === id ? Object.assign({}, x, {cat:cat}) : x; });
     this.persist(); this.render();
   },
+  quickTipo: function(el){
+    var id = el.dataset.id, tipo = el.value;
+    this.state.expenses = this.state.expenses.map(function(x){ return x.id === id ? Object.assign({}, x, {tipo:tipo}) : x; });
+    this.persist(); this.render();
+  },
 
   /* ---------- Receitas ---------- */
   openIncForm: function(){
@@ -1045,7 +1050,7 @@ var App = {
       return '<div class="list-row">' +
         '<div class="row-date">'+esc(dateLabel)+'</div>' +
         '<div class="row-main"><div class="row-desc">'+esc(x.desc)+'</div><div class="row-sub">'+esc(cardName(x.cardId))+(x.portador?' 💳 '+esc(x.portador)+(x.cartaoFinal?' •'+esc(x.cartaoFinal):''):'')+' · '+esc(x.pessoa)+(parcLabel?' · <span class="row-parc">parcela '+esc(parcLabel)+'</span>':'')+'</div></div>' +
-        '<span class="pill '+esc(tipoClass(x.tipo))+'">'+esc(x.tipo)+'</span>' +
+        '<select class="inp-sm" data-act="quickTipo" data-id="'+esc(x.id)+'" style="text-transform:capitalize;max-width:110px">' + self.optionsHtml(s.taxo.tipos, x.tipo, true) + '</select>' +
         '<select class="inp-sm" data-act="quickCat" data-id="'+esc(x.id)+'">' + self.optionsHtml(s.taxo.cats, x.cat) + '</select>' +
         '<div class="row-val">'+self.fmt(x.valor)+'</div>' +
         '<div class="row-actions"><button class="btn-tiny" data-act="editExp" data-id="'+esc(x.id)+'">Editar</button><button class="btn-tiny danger" data-act="delExp" data-id="'+esc(x.id)+'">'+esc(delLabel)+'</button></div>' +
@@ -1337,7 +1342,7 @@ var App = {
   /* ==================== Eventos ==================== */
   bindEvents: function(){
     var self = this;
-    var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat','mrField'];
+    var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat','quickTipo','mrField'];
     var CLICK_ACTIONS = ['goTab','openCardForm','editCard','saveCard','cancelCard','delCard','openExpForm','editExp','saveExp','cancelExp','delExp',
       'openIncForm','editInc','saveInc','cancelInc','delInc','addPreset','delPreset','addTaxo','delTaxo','parseNow','clearImport','confirmImport',
       'pullCloud','pushCloud','exportJson','addMerchantRule','delMerchantRule'];
