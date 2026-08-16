@@ -247,7 +247,7 @@ var App = {
       updatedAt: 0,
       cfg: { owner:'', repo:'', branch:'main', path:'financas-dados.json', token:'', auto:true, aiProxyUrl:'', aiProxyKey:'' },
       sync: { st:'off', msg:'', msgKind:'info', last:null },
-      filters: { mes: mes, cardId:'', cat:'', tipo:'', pessoa:'', busca:'', recTipo:'', recPessoa:'' },
+      filters: { mes: mes, cardId:'', cat:'', tipo:'', pessoa:'', portador:'', busca:'', recTipo:'', recPessoa:'' },
       cardForm: null, expForm: null, incForm: null, formErr: '', confirmDel: null,
       imp: { cardId:'', mes: mes, tipo:'familiar', pessoa:'Davi', text:'', busy:false, pdfBusy:false, err:'', rows:null, pdfPassword:'' },
       prefs: { ocultarValores:false, mesesProjecao:6, modeloIA:'claude-haiku-4-5' }
@@ -766,7 +766,7 @@ var App = {
     this.state.expenses = this.state.expenses.concat(novos);
     this.state.imp.rows = null; this.state.imp.text = '';
     this.state.tab = 'exp';
-    this.state.filters = Object.assign({}, this.state.filters, { mes: imp.mes, cardId:'', cat:'', tipo:'', pessoa:'', busca:'' });
+    this.state.filters = Object.assign({}, this.state.filters, { mes: imp.mes, cardId:'', cat:'', tipo:'', pessoa:'', portador:'', busca:'' });
     this.persist(); this.render();
   },
 
@@ -988,6 +988,19 @@ var App = {
     html += '<label class="field-filter">Cartão<select class="inp-sm" data-act="filtField" data-k="cardId">' +
       '<option value=""'+(f.cardId===''?' selected':'')+'>Todos</option><option value="none"'+(f.cardId==='none'?' selected':'')+'>Sem cartão</option>' +
       s.cards.map(function(c){ return '<option value="'+esc(c.id)+'"'+(f.cardId===c.id?' selected':'')+'>'+esc(c.nome)+'</option>'; }).join('') + '</select></label>';
+    var portadores = {};
+    s.expenses.forEach(function(x){
+      if(!x.portador && !x.cartaoFinal) return;
+      var key = (x.portador||'') + '|' + (x.cartaoFinal||'');
+      portadores[key] = (x.portador||'?') + (x.cartaoFinal ? ' \u2022' + x.cartaoFinal : '');
+    });
+    var portKeys = Object.keys(portadores).sort(function(a,b){ return portadores[a].localeCompare(portadores[b],'pt-BR'); });
+    if(portKeys.length){
+      html += '<label class="field-filter">Portador<select class="inp-sm" data-act="filtField" data-k="portador">' +
+        '<option value=""'+(f.portador===''?' selected':'')+'>Todos</option>' +
+        portKeys.map(function(k){ return '<option value="'+esc(k)+'"'+(f.portador===k?' selected':'')+'>\ud83d\udcb3 '+esc(portadores[k])+'</option>'; }).join('') +
+        '</select></label>';
+    }
     html += '<label class="field-filter">Categoria<select class="inp-sm" data-act="filtField" data-k="cat"><option value="">Todas</option>' + this.optionsHtml(s.taxo.cats, f.cat) + '</select></label>';
     html += '<label class="field-filter">Tipo<select class="inp-sm" data-act="filtField" data-k="tipo" style="text-transform:capitalize"><option value="">Todos</option>' + this.optionsHtml(s.taxo.tipos, f.tipo, true) + '</select></label>';
     html += '<label class="field-filter">Pessoa<select class="inp-sm" data-act="filtField" data-k="pessoa"><option value="">Todas</option>' + this.optionsHtml(PESSOAS, f.pessoa) + '</select></label>';
@@ -1020,6 +1033,7 @@ var App = {
         (!f.cardId || (f.cardId==='none' ? !x.cardId : x.cardId===f.cardId)) &&
         (!f.cat || x.cat===f.cat) && (!f.tipo || x.tipo===f.tipo) &&
         (!f.pessoa || x.pessoa===f.pessoa) &&
+        (!f.portador || ((x.portador||'') + '|' + (x.cartaoFinal||'')) === f.portador) &&
         (!f.busca || x.desc.toLowerCase().indexOf(f.busca.toLowerCase())!==-1);
     }).sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
 
