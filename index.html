@@ -681,10 +681,11 @@ var App = {
       'Extraia TODOS os lançamentos (compras, assinaturas, tarifas; estornos/créditos como valor negativo). ' +
       'IGNORE linhas de pagamento de fatura recebido, limites, totais, saldos e juros informativos.\n' +
       'Identifique compras parceladas por padrões como "3/10", "PARC 03/10", "parcela 03 de 10".\n' +
+      'Faturas costumam agrupar lançamentos por portador do cartão (ex.: "DAVI F LELES - final 1234", "cartão adicional ÁGDA ..."). Identifique a qual portador cada lançamento pertence e informe em "portador" o primeiro nome dele exatamente como aparece na fatura, e em "cartaoFinal" os 4 últimos dígitos do cartão daquela seção (string, ou null se não houver).\n' +
       'Classifique cada lançamento em UMA categoria desta lista exata: ' + this.state.taxo.cats.join(', ') + '.\n' +
       'A fatura é do mês ' + imp.mes + '; se a data não tiver ano, deduza o ano por isso.\n' +
       'Responda SOMENTE com um array JSON válido, sem texto antes ou depois, no formato:\n' +
-      '[{"data":"AAAA-MM-DD","descricao":"...","valor":123.45,"parcelaAtual":3,"parcelasTotal":10,"categoria":"Alimentação"}]\n' +
+      '[{"data":"AAAA-MM-DD","descricao":"...","valor":123.45,"parcelaAtual":3,"parcelasTotal":10,"categoria":"Alimentação","portador":"Davi","cartaoFinal":"1234"}]\n' +
       'Use null em parcelaAtual/parcelasTotal quando não for parcelado. "valor" é o valor da parcela lançada na fatura, número com ponto decimal.';
     var headers = { 'Content-Type': 'application/json' };
     if(this.state.cfg.aiProxyKey) headers['x-proxy-key'] = this.state.cfg.aiProxyKey;
@@ -708,9 +709,22 @@ var App = {
       if(!m) throw new Error('a resposta não continha lançamentos');
       var arr = JSON.parse(m[0]);
       if(!Array.isArray(arr) || !arr.length) throw new Error('nenhum lançamento identificado');
+      var normNome = function(str){ return String(str||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); };
+      var pessoaDoPortador = function(portador){
+        if(!portador) return null;
+        var p = normNome(portador);
+        var match = PESSOAS.filter(function(x){ return x !== 'Ambos'; }).find(function(x){
+          var nx = normNome(x);
+          return p.indexOf(nx) !== -1 || nx.indexOf(p) !== -1;
+        });
+        return match || null;
+      };
       var rows = arr.map(function(r){
         var desc = String(r.descricao || r.desc || '').trim() || 'Lançamento';
         var rule = self.matchMerchantRule(desc);
+        var portador = (typeof r.portador === 'string' && r.portador.trim()) ? r.portador.trim() : '';
+        var cartaoFinal = (r.cartaoFinal !== null && r.cartaoFinal !== undefined && String(r.cartaoFinal).trim()) ? String(r.cartaoFinal).trim().slice(-4) : '';
+        var pessoaAuto = pessoaDoPortador(portador);
         return {
           data: typeof r.data === 'string' ? r.data : '',
           desc: desc,
@@ -718,7 +732,9 @@ var App = {
           pAtual: r.parcelaAtual ? Number(r.parcelaAtual) : null,
           pTotal: r.parcelasTotal ? Number(r.parcelasTotal) : null,
           cat: self.state.taxo.cats.indexOf(r.categoria) !== -1 ? r.categoria : 'Outros',
-          tipo: rule ? rule.tipo : imp.tipo, pessoa: rule ? rule.pessoa : imp.pessoa, inc: true
+          portador: portador, cartaoFinal: cartaoFinal,
+          tipo: rule ? rule.tipo : imp.tipo,
+          pessoa: pessoaAuto || (rule ? rule.pessoa : imp.pessoa), inc: true
         };
       }).filter(function(r){ return r.valor !== 0; });
       self.state.imp.busy = false; self.state.imp.rows = rows;
@@ -744,6 +760,7 @@ var App = {
     var novos = (imp.rows||[]).filter(function(r){ return r.inc; }).map(function(r){
       return { id: uid(), desc: r.desc, valor: Number(r.valor)||0, data: r.data, fatura: imp.mes,
         cardId: imp.cardId || null, cat: r.cat, tipo: r.tipo, pessoa: r.pessoa,
+        portador: r.portador || '', cartaoFinal: r.cartaoFinal || '',
         pAtual: r.pTotal ? (r.pAtual || 1) : null, pTotal: r.pTotal || null };
     });
     this.state.expenses = this.state.expenses.concat(novos);
@@ -1013,7 +1030,7 @@ var App = {
       var delLabel = s.confirmDel === 'e'+x.id ? 'Confirmar?' : 'Excluir';
       return '<div class="list-row">' +
         '<div class="row-date">'+esc(dateLabel)+'</div>' +
-        '<div class="row-main"><div class="row-desc">'+esc(x.desc)+'</div><div class="row-sub">'+esc(cardName(x.cardId))+' · '+esc(x.pessoa)+(parcLabel?' · <span class="row-parc">parcela '+esc(parcLabel)+'</span>':'')+'</div></div>' +
+        '<div class="row-main"><div class="row-desc">'+esc(x.desc)+'</div><div class="row-sub">'+esc(cardName(x.cardId))+(x.portador?' 💳 '+esc(x.portador)+(x.cartaoFinal?' •'+esc(x.cartaoFinal):''):'')+' · '+esc(x.pessoa)+(parcLabel?' · <span class="row-parc">parcela '+esc(parcLabel)+'</span>':'')+'</div></div>' +
         '<span class="pill '+esc(tipoClass(x.tipo))+'">'+esc(x.tipo)+'</span>' +
         '<select class="inp-sm" data-act="quickCat" data-id="'+esc(x.id)+'">' + self.optionsHtml(s.taxo.cats, x.cat) + '</select>' +
         '<div class="row-val">'+self.fmt(x.valor)+'</div>' +
@@ -1112,6 +1129,7 @@ var App = {
           '<div class="row-date">'+esc(dataLabel)+'</div>' +
           '<input class="inp-sm" style="flex:2;min-width:140px" value="'+esc(r.desc)+'" data-act="parsedField" data-i="'+i+'" data-k="desc">' +
           (parcLabel ? '<span class="pill" style="background:var(--coral-dim);color:var(--coral)">'+esc(parcLabel)+'</span>' : '') +
+          (r.portador || r.cartaoFinal ? '<span class="pill" title="Portador identificado na fatura">💳 '+esc(r.portador||'')+(r.cartaoFinal?' •'+esc(r.cartaoFinal):'')+'</span>' : '') +
           '<select class="inp-sm" data-act="parsedField" data-i="'+i+'" data-k="cat">' + self.optionsHtml(s.taxo.cats, r.cat) + '</select>' +
           '<select class="inp-sm" data-act="parsedField" data-i="'+i+'" data-k="tipo" style="text-transform:capitalize">' + self.optionsHtml(s.taxo.tipos, r.tipo, true) + '</select>' +
           '<select class="inp-sm" data-act="parsedField" data-i="'+i+'" data-k="pessoa">' + self.optionsHtml(PESSOAS, r.pessoa) + '</select>' +
