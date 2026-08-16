@@ -605,7 +605,9 @@ var App = {
     var f = ev.target.files && ev.target.files[0]; ev.target.value = '';
     if(!f) return;
     var self = this;
-    var pwd = (this.state.imp.pdfPassword || '').trim() || undefined;
+    var pwdEl = this.root.querySelector('input[data-act="impField"][data-k="pdfPassword"]');
+    var pwd = ((pwdEl ? pwdEl.value : this.state.imp.pdfPassword) || '').trim() || undefined;
+    if(pwd) this.state.imp.pdfPassword = pwd;
     this.state.imp.pdfBusy = true; this.state.imp.err=''; this.render();
     Promise.resolve().then(function(){
       return import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');
