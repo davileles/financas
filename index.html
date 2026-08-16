@@ -239,7 +239,7 @@ var App = {
       tab: 'dash',
       cards: [], expenses: [], incomes: [],
       presets: { despesas: [], receitas: [] },
-      pIn: { despesas: { n:'', cat:'Outros', tipo:'familiar' }, receitas: { n:'', cat:'Salário', tipo:'familiar' } },
+      pIn: { despesas: { n:'', cat:'Outros', tipo:'familiar', pessoa:'', cardId:'' }, receitas: { n:'', cat:'Salário', tipo:'familiar', pessoa:'' } },
       taxo: { cats: CATS.slice(), recCats: RCATS.slice(), tipos: TIPOS.slice() },
       tIn: { cats:'', recCats:'', tipos:'' },
       merchantRules: DEFAULT_MERCHANT_RULES.map(function(r){ return Object.assign({}, r); }),
@@ -262,7 +262,7 @@ var App = {
   normPresets: function(p){
     function norm(arr, defCat, defTipo){
       return (arr || []).map(function(x){
-        return typeof x === 'string' ? {n:x, cat:defCat, tipo:defTipo} : {n:x.n, cat:x.cat||defCat, tipo:x.tipo||defTipo};
+        return typeof x === 'string' ? {n:x, cat:defCat, tipo:defTipo, pessoa:'', cardId:''} : {n:x.n, cat:x.cat||defCat, tipo:x.tipo||defTipo, pessoa:x.pessoa||'', cardId:x.cardId||''};
       });
     }
     return { despesas: norm(p && p.despesas, 'Outros', 'familiar'), receitas: norm(p && p.receitas, 'Salário', 'familiar') };
@@ -463,7 +463,7 @@ var App = {
     var k = el.dataset.k, v = el.value;
     this.state.expForm[k] = v;
     if(k === 'desc'){
-      var p = this.findPreset('despesas', v); if(p){ this.state.expForm.cat = p.cat; this.state.expForm.tipo = p.tipo; }
+      var p = this.findPreset('despesas', v); if(p){ this.state.expForm.cat = p.cat; this.state.expForm.tipo = p.tipo; if(p.pessoa) this.state.expForm.pessoa = p.pessoa; if(p.cardId) this.state.expForm.cardId = p.cardId; }
       var rule = this.matchMerchantRule(v); if(rule){ this.state.expForm.tipo = rule.tipo; this.state.expForm.pessoa = rule.pessoa; }
     }
     this.render();
@@ -516,7 +516,7 @@ var App = {
   incField: function(el){
     var k = el.dataset.k, v = el.value;
     this.state.incForm[k] = v;
-    if(k === 'desc'){ var p = this.findPreset('receitas', v); if(p){ this.state.incForm.cat = p.cat; this.state.incForm.tipo = p.tipo; } }
+    if(k === 'desc'){ var p = this.findPreset('receitas', v); if(p){ this.state.incForm.cat = p.cat; this.state.incForm.tipo = p.tipo; if(p.pessoa) this.state.incForm.pessoa = p.pessoa; } }
     this.render();
   },
   saveInc: function(){
@@ -552,7 +552,7 @@ var App = {
     var g = el.dataset.g, f = this.state.pIn[g], n = (f.n||'').trim();
     if(!n) return;
     var cur = (this.state.presets[g]||[]).filter(function(x){ return x.n.toLowerCase() !== n.toLowerCase(); });
-    cur.push({ n:n, cat:f.cat, tipo:f.tipo });
+    cur.push({ n:n, cat:f.cat, tipo:f.tipo, pessoa:f.pessoa||'', cardId: g==='despesas' ? (f.cardId||'') : '' });
     cur.sort(function(a,b){ return a.n.localeCompare(b.n,'pt-BR'); });
     this.state.presets[g] = cur;
     this.state.pIn[g].n = '';
@@ -1188,11 +1188,18 @@ var App = {
       html += '<div class="row">';
       html += '<select class="inp-sm" data-act="presetInput" data-g="'+g+'" data-k="cat">' + self.optionsHtml(catList, pin.cat) + '</select>';
       html += '<select class="inp-sm" data-act="presetInput" data-g="'+g+'" data-k="tipo" style="text-transform:capitalize">' + self.optionsHtml(s.taxo.tipos, pin.tipo, true) + '</select>';
+      html += '<select class="inp-sm" data-act="presetInput" data-g="'+g+'" data-k="pessoa"><option value=""'+(pin.pessoa?'':' selected')+'>Pessoa (opcional)</option>' + self.optionsHtml(PESSOAS, pin.pessoa) + '</select>';
+      if(g === 'despesas'){
+        html += '<select class="inp-sm" data-act="presetInput" data-g="despesas" data-k="cardId"><option value=""'+(pin.cardId?'':' selected')+'>Pagamento (opcional)</option>' + self.cardOptionsHtml(pin.cardId) + '</select>';
+      }
       html += '<button class="btn-tiny" data-act="addPreset" data-g="'+g+'">Adicionar</button>';
       html += '</div>';
       var items = (s.presets[g]||[]);
       html += '<div class="chip-wrap">' + (items.length ? items.map(function(p){
-        return '<span class="chip">'+esc(p.n)+' · '+esc(p.cat)+' · '+esc(p.tipo)+'<button data-act="delPreset" data-g="'+g+'" data-n="'+esc(p.n)+'">×</button></span>';
+        var extras = '';
+        if(p.pessoa) extras += ' · '+esc(p.pessoa);
+        if(p.cardId){ var pc = s.cards.find(function(c){ return c.id===p.cardId; }); extras += ' · '+esc(p.cardId==='none' ? 'Débito/Dinheiro' : (pc ? pc.nome : 'Cartão removido')); }
+        return '<span class="chip">'+esc(p.n)+' · '+esc(p.cat)+' · '+esc(p.tipo)+extras+'<button data-act="delPreset" data-g="'+g+'" data-n="'+esc(p.n)+'">×</button></span>';
       }).join('') : '<span style="font-size:12px;color:var(--text3)">Nenhum nome cadastrado.</span>') + '</div></div>';
     });
     html += '</div>';
