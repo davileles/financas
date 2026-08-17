@@ -1037,6 +1037,66 @@ var App = {
   optionsHtml: function(list, selected, capitalize){
     return list.map(function(v){ return '<option value="'+esc(v)+'"' + (selected===v?' selected':'') + (capitalize?' style="text-transform:capitalize"':'') + '>'+esc(v)+'</option>'; }).join('');
   },
+  expFiltered: function(){
+    var s = this.state, f = s.filters;
+    return s.expenses.filter(function(x){
+      return (!f.mes || x.fatura===f.mes) &&
+        (!f.cardId || (f.cardId==='none' ? !x.cardId : x.cardId===f.cardId)) &&
+        (!f.cat || x.cat===f.cat) && (!f.tipo || x.tipo===f.tipo) &&
+        (!f.pessoa || x.pessoa===f.pessoa) &&
+        (!f.portador || ((x.portador||'') + '|' + (x.cartaoFinal||'')) === f.portador) &&
+        (!f.busca || x.desc.toLowerCase().indexOf(f.busca.toLowerCase())!==-1);
+    }).sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
+  },
+  copyExp: function(el){
+    var s = this.state, self = this, f = s.filters;
+    var filtered = this.expFiltered();
+    if(!filtered.length) return;
+    var cardName = function(id){ var c = s.cards.find(function(x){ return x.id===id; }); return c ? c.nome : 'Sem cart\u00e3o'; };
+    var linhas = [];
+    var titulo = '*Despesas';
+    if(f.mes) titulo += ' \u2014 ' + mesLabel(f.mes);
+    titulo += '*';
+    var filtDesc = [];
+    if(f.cat) filtDesc.push('Categoria: ' + f.cat);
+    if(f.tipo) filtDesc.push('Tipo: ' + f.tipo);
+    if(f.pessoa) filtDesc.push('Pessoa: ' + f.pessoa);
+    if(f.cardId) filtDesc.push('Cart\u00e3o: ' + (f.cardId==='none' ? 'Sem cart\u00e3o' : cardName(f.cardId)));
+    if(f.busca) filtDesc.push('Busca: "' + f.busca + '"');
+    linhas.push(titulo);
+    if(filtDesc.length) linhas.push('_' + filtDesc.join(' \u00b7 ') + '_');
+    linhas.push('');
+    filtered.forEach(function(x){
+      var dateLabel = x.data ? x.data.slice(8,10)+'/'+x.data.slice(5,7) : '\u2014';
+      var extras = [cardName(x.cardId)];
+      if(x.pessoa) extras.push(x.pessoa);
+      if(x.pTotal) extras.push('parcela ' + x.pAtual + '/' + x.pTotal);
+      linhas.push(dateLabel + ' \u00b7 ' + x.desc + ' \u2014 ' + self.fmt(x.valor) + ' (' + extras.join(' \u00b7 ') + ')');
+    });
+    var total = filtered.reduce(function(t,x){ return t+x.valor; },0);
+    linhas.push('');
+    linhas.push('*Total: ' + self.fmt(total) + '* (' + filtered.length + ' lan\u00e7amento' + (filtered.length>1?'s':'') + ')');
+    var texto = linhas.join('\n');
+    var feedback = function(){
+      var orig = el.textContent;
+      el.textContent = '\u2713 Copiado!';
+      setTimeout(function(){ el.textContent = orig; }, 2000);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(feedback).catch(function(){ self._copyFallback(texto); feedback(); });
+    } else {
+      this._copyFallback(texto); feedback();
+    }
+  },
+  _copyFallback: function(texto){
+    var ta = document.createElement('textarea');
+    ta.value = texto;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  },
   renderExp: function(){
     var s = this.state, self = this, f = s.filters;
     var html = '<div style="display:flex;flex-direction:column;gap:20px">';
@@ -1087,14 +1147,7 @@ var App = {
       html += '</div>';
     }
 
-    var filtered = s.expenses.filter(function(x){
-      return (!f.mes || x.fatura===f.mes) &&
-        (!f.cardId || (f.cardId==='none' ? !x.cardId : x.cardId===f.cardId)) &&
-        (!f.cat || x.cat===f.cat) && (!f.tipo || x.tipo===f.tipo) &&
-        (!f.pessoa || x.pessoa===f.pessoa) &&
-        (!f.portador || ((x.portador||'') + '|' + (x.cartaoFinal||'')) === f.portador) &&
-        (!f.busca || x.desc.toLowerCase().indexOf(f.busca.toLowerCase())!==-1);
-    }).sort(function(a,b){ return (b.data||'').localeCompare(a.data||''); });
+    var filtered = this.expFiltered();
 
     var cardName = function(id){ var c = s.cards.find(function(x){ return x.id===id; }); return c ? c.nome : 'Sem cartão'; };
     var rowsHtml = filtered.map(function(x){
@@ -1112,7 +1165,9 @@ var App = {
     }).join('') || '<div class="empty-row">Nenhum lançamento neste filtro.</div>';
 
     var total = filtered.reduce(function(t,x){ return t+x.valor; },0);
-    html += '<div class="list-wrap"><div class="list-head"><span><strong>'+filtered.length+'</strong> lançamento(s)</span><span>Total: <strong>'+this.fmt(total)+'</strong></span></div>' + rowsHtml + '</div>';
+    html += '<div class="list-wrap"><div class="list-head"><span><strong>'+filtered.length+'</strong> lançamento(s)</span><span>Total: <strong>'+this.fmt(total)+'</strong>' +
+      (filtered.length ? '<button class="btn-tiny" style="margin-left:14px" data-act="copyExp" title="Copiar lançamentos filtrados para compartilhar">\ud83d\udccb Copiar</button>' : '') +
+      '</span></div>' + rowsHtml + '</div>';
     html += '</div>';
     return html;
   },
@@ -1401,7 +1456,7 @@ var App = {
     var CHANGE_ACTIONS = ['filtField','cardField','expField','incField','presetInput','taxoInput','impField','parsedField','cfgField','prefField','quickCat','quickTipo','mrField'];
     var CLICK_ACTIONS = ['goTab','openCardForm','editCard','saveCard','cancelCard','delCard','openExpForm','editExp','saveExp','cancelExp','delExp',
       'openIncForm','editInc','saveInc','cancelInc','delInc','addPreset','delPreset','editPreset','cancelPresetEdit','addTaxo','delTaxo','editTaxo','cancelTaxoEdit','parseNow','clearImport','confirmImport',
-      'pullCloud','pushCloud','exportJson','addMerchantRule','delMerchantRule'];
+      'pullCloud','pushCloud','exportJson','addMerchantRule','delMerchantRule','copyExp'];
     var FILE_ACTIONS = ['onPdf','onImportFile'];
     var CHECK_ACTIONS = ['toggleRow'];
 
